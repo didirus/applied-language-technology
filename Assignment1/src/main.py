@@ -6,18 +6,22 @@
 # 4. The resulting files of (1-3) can be combined into one single file of the form:
 
 import part1
-import part2
-import part3
-import part4
+# import part2
+# import part3
+# import part4
 
 f_en = open('../data/file.en', 'r')
 f_de = open('../data/file.de', 'r')
 f_align = open('../data/file.aligned', 'r')
 
-part1.phrase_extraction(f_de, f_en, f_align)
-part2.phrase_probabilities()
-part3.lexical_probabilities()
-part4.combine()
+en = f_en.readlines()
+de = f_de.readlines()
+align = f_align.readlines()
+
+part1.phrase_extraction(de, en, align)
+# part2.phrase_probabilities()
+# part3.lexical_probabilities()
+# part4.combine()
 
 f_en.close()
 f_de.close()

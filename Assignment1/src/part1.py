@@ -1,8 +1,5 @@
 import numpy as np
 
-# 1. Phrase extraction algorithm
-
-
 def phrase_extraction(e, f, a):
 
     # english_phrases = np.array(['resumption', ])
