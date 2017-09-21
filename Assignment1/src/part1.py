@@ -16,9 +16,19 @@ def new_entry(e_p, f_p, e_freq, f_freq, c_freq, p_a, e_phrase, f_phrase):
     return e_p, f_p, e_freq, f_freq, c_freq, p_a
 
 
-def valid_phrase_pair():
+def valid_phrase_pair(matrix,v_pivot,h_pivot,v_width,h_width):
+    # TODO: Check this again
+    shape_matrix = list(matrix.shape)
+    top_matrix = matrix[0:v_pivot,h_pivot+h_width]
+    bottom_matrix = matrix[v_pivot+v_width:shape_matrix[0],h_pivot:h_pivot+h_width]
 
-    return True
+    left_matrix = matrix[v_pivot:v_pivot+v_width,0:h_pivot+h_width]
+    right_matrix = matrix[v_pivot:v_pivot+v_width,h_pivot+h_width:shape_matrix[1]]
+
+    if sum(top_matrix)+sum(bottom_matrix)+sum(right_matrix)+sum(left_matrix)>0:
+        return False
+    else:
+        return True
 
 
 def create_matrix(alignment, e_s, f_s):
@@ -68,7 +78,7 @@ def phrase_extraction(e, f, a):
                 f_phrase = ' '.join(f_s[temp_f_p])
 
                 # if a valid phrase pair is found: update arrays
-                if valid_phrase_pair():
+                if valid_phrase_pair(matrix,v_pivot,h_pivot,v_width,h_width):
                     if e_phrase not in e_p:
                         # english phrase not found yet, so add new entry
                         e_p, f_p, e_freq, f_freq, c_freq, p_a = new_entry(e_p, f_p, e_freq, f_freq, c_freq, p_a, e_phrase, f_phrase)
@@ -82,7 +92,7 @@ def phrase_extraction(e, f, a):
                                 break
                         if not exists:
                             # foreign phrase not found yet, so add new entry
-                            e_p, f_p, e_freq, f_freq, c_freq = new_entry(e_p, f_p, e_freq, f_freq, c_freq, p_a, e_phrase, f_phrase)
+                            e_p, f_p, e_freq, f_freq, c_freq, p_a = new_entry(e_p, f_p, e_freq, f_freq, c_freq, p_a, e_phrase, f_phrase)
 
                     # update frequencies
                     e_freq, f_freq, c_freq = update_frequencies(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase)
