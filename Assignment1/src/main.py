@@ -10,27 +10,41 @@
 
 # file.aligned: g-e
 
+# 0-0 1-1 1-2 2-3
+# wiederaufnahme der sitzungsperiode
+# resumption of the session
+
 
 import numpy as np
 
 # 1. Phrase extraction algorithm
 
+
 def phrase_extraction(e, f, a):
-    for i in len(e):
-        phrases = np.array([])
+
+    # english_phrases = np.array([])
+    # foreign_phrases = np.array([])
+    # english_freq = np.array([])
+    # foreign_freq = np.array([])
+    # combi_freq = np.array([])
+
+    for i in range(len(e)):
         enlish_sentence = e[i].split()
         foreign_sentence = f[i].split()
         alignment = a[i].split()
+        alignment = [x.split('-') for x in alignment]
 
-        for word in english_sentence:
-            if word
-            valid = True
-            this_phrase = np.array([])
-            while valid:
-                for word in english_sentence:
+        matrix = np.zeros((len(enlish_sentence), len(foreign_sentence)), dtype=int)
 
+        for alig in alignment:
+            matrix[int(alig[0]),int(alig[1])] = 1
 
+        horizontal = []
+        vertical = []
 
+        for h in range(len(enlish_sentence)):
+            for v in range(len(foreign_sentence)):
+                if matrix[h,v] ==
 
 with open('../data/file.en') as textfile:
     english_reader = textfile.readlines()
@@ -39,5 +53,5 @@ with open('../data/file.en') as textfile:
         with open('../data/file.aligned') as textfile:
             aligned_reader = textfile.readlines()
 
-            phrase_extraction(english_reader, german_reader, aligned_reader)
+            phrase_extraction(german_reader, english_reader, aligned_reader)
 
