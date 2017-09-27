@@ -16,18 +16,19 @@ def new_entry(e_p, f_p, e_freq, f_freq, c_freq, p_a, e_phrase, f_phrase):
     return e_p, f_p, e_freq, f_freq, c_freq, p_a
 
 
-def valid_phrase_pair(matrix,v_pivot,h_pivot,v_width,h_width):
-    # TODO: Check this again
+def valid_phrase_pair(matrix, v_pivot, h_pivot, v_width, h_width):
     shape_matrix = list(matrix.shape)
-    top_matrix = matrix[0:v_pivot,h_pivot+h_width]
-    bottom_matrix = matrix[v_pivot+v_width:shape_matrix[0],h_pivot:h_pivot+h_width]
+    top_matrix = matrix[0:v_pivot, h_pivot:h_pivot+h_width]
+    bottom_matrix = matrix[v_pivot+v_width:shape_matrix[0], h_pivot:h_pivot+h_width]
 
-    left_matrix = matrix[v_pivot:v_pivot+v_width,0:h_pivot+h_width]
-    right_matrix = matrix[v_pivot:v_pivot+v_width,h_pivot+h_width:shape_matrix[1]]
+    left_matrix = matrix[v_pivot:v_pivot+v_width, 0:h_pivot]
+    right_matrix = matrix[v_pivot:v_pivot+v_width, h_pivot+h_width:shape_matrix[1]]
 
-    if sum(top_matrix)+sum(bottom_matrix)+sum(right_matrix)+sum(left_matrix)>0:
+    if np.sum(top_matrix)+np.sum(bottom_matrix)+np.sum(right_matrix)+np.sum(left_matrix) > 0:
+        print('False', v_pivot, h_pivot, v_width, h_width)
         return False
     else:
+        print('True', v_pivot, h_pivot, v_width, h_width)
         return True
 
 
@@ -50,57 +51,62 @@ def process_sentence(e, f, a, i):
 
 def phrase_extraction(e, f, a):
 
-    e_p = np.array([], dtype=str)
-    f_p = np.array([], dtype=str)
-    e_freq = np.array([], dtype=float)
-    f_freq = np.array([], dtype=float)
-    c_freq = np.array([], dtype=float)
-    p_a = np.array([], dtype=int)
+    # We initialise numpy arrays
+    e_p = np.array([], dtype=str)  # The english phrases
+    f_p = np.array([], dtype=str)  # The translated phrases
+    e_freq = np.array([], dtype=float)  # The frequency of the english phrases
+    f_freq = np.array([], dtype=float)  # The frequency of the translated phrases
+    c_freq = np.array([], dtype=float)  # The frequency of the english and translated phrases together
+    p_a = np.array([], dtype=int)  # The alignments of the phrase pairs
 
+    # For every sentence for e, f, and a...
     for i in range(len(e)):
+        # Split the lines
         e_s, f_s, alignment = process_sentence(e, f, a, i)
+        # Create the alignment matrix
         matrix = create_matrix(alignment, e_s, f_s)
+        # Set the scan widths initially to 1
         v_width, h_width = 1, 1
+        # A phrase has a limit amount of words
         grow_limit = 5
-
+        # Start with a vertical pivot which is just going from top to down in the matrix
         for v_pivot in range(len(e_s)):
-
+            # The horizontal pivot is the location where the first alignment is found
             h_pivot = np.where(matrix[v_pivot, :] == 1)[0][0]
-
+            # Set the flag for 'growing' to True
             grow = True
+            # While we are looking for phrases, we are growing our search space bounded by the limit
             while grow:
-
-                # get list of indices of sentence which is the phrase
+                # Get list of indices of sentence which is the potential phrase (both languages)
                 temp_e_p = list(range(v_pivot, v_pivot+v_width))
                 temp_f_p = list(range(h_pivot, h_pivot+h_width))
-                # get total string of phrase
+                # Get total string of phrase (both languages)
                 e_phrase = ' '.join(e_s[temp_e_p])
                 f_phrase = ' '.join(f_s[temp_f_p])
-
-                # if a valid phrase pair is found: update arrays
-                if valid_phrase_pair(matrix,v_pivot,h_pivot,v_width,h_width):
+                # If a valid phrase pair is found: update arrays
+                if valid_phrase_pair(matrix, v_pivot, h_pivot, v_width, h_width):
                     if e_phrase not in e_p:
-                        # english phrase not found yet, so add new entry
+                        # English phrase not found yet, so add new entry
                         e_p, f_p, e_freq, f_freq, c_freq, p_a = new_entry(e_p, f_p, e_freq, f_freq, c_freq, p_a, e_phrase, f_phrase)
                     else:
-                        # english phrase found, now check for foreign phrase
+                        # English phrase found, now check for foreign phrase
                         exists = False
                         for ind in np.where(e_p == e_phrase)[0]:
                             if f_p[ind] == f_phrase:
-                                # entry already exists
+                                # Entry already exists
                                 exists = True
                                 break
                         if not exists:
-                            # foreign phrase not found yet, so add new entry
+                            # Foreign phrase not found yet, so add new entry
                             e_p, f_p, e_freq, f_freq, c_freq, p_a = new_entry(e_p, f_p, e_freq, f_freq, c_freq, p_a, e_phrase, f_phrase)
 
-                    # update frequencies
+                    # Update frequencies
                     e_freq, f_freq, c_freq = update_frequencies(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase)
 
                     h_width = min(h_width, v_width) + 1
                     v_width = min(h_width, v_width) + 1
 
-                # if not yet pair found and search space was already max: stop growing
+                # If not yet pair found and search space was already max: stop growing
                 elif v_width == grow_limit and h_width == grow_limit:
                     grow = False
 
