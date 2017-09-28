@@ -15,14 +15,13 @@ def update_frequencies(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase):
     return e_freq, f_freq, c_freq
 
 
-def new_entry(e_p, f_p, e_freq, f_freq, c_freq, p_a, e_phrase, f_phrase):
+def new_entry(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase):
     e_p = np.append(e_p, e_phrase)
     f_p = np.append(f_p, f_phrase)
     e_freq = np.append(e_freq, 0)
     f_freq = np.append(f_freq, 0)
     c_freq = np.append(c_freq, 0)
-    p_a = np.append(p_a, 0)
-    return e_p, f_p, e_freq, f_freq, c_freq, p_a
+    return e_p, f_p, e_freq, f_freq, c_freq
 
 
 def valid_phrase_pair(matrix, v_pivot, h_pivot, v_width, h_width):
@@ -36,11 +35,11 @@ def valid_phrase_pair(matrix, v_pivot, h_pivot, v_width, h_width):
     inside_matrix = matrix[v_pivot:v_pivot+v_width,h_pivot:h_pivot+h_width]
     for i in range(len(inside_matrix)):
         if np.sum(inside_matrix[i]) == 0:
-            inside_mat_flag=True
+            inside_mat_flag = True
 
     for i in range(inside_matrix.shape[1]):
         if np.sum(inside_matrix[:, i])==0:
-            inside_mat_flag=True
+            inside_mat_flag = True
 
     if np.sum(top_matrix)+np.sum(bottom_matrix)+np.sum(right_matrix)+np.sum(left_matrix) > 0 :
         return False
@@ -75,7 +74,6 @@ def phrase_extraction(e, f, a):
     e_freq = np.array([], dtype=float)  # The frequency of the english phrases
     f_freq = np.array([], dtype=float)  # The frequency of the translated phrases
     c_freq = np.array([], dtype=float)  # The frequency of the english and translated phrases together
-    p_a = np.array([], dtype=int)  # The alignments of the phrase pairs
 
     # For every sentence for e, f, and a...
     for i in range(len(e)):
@@ -111,7 +109,7 @@ def phrase_extraction(e, f, a):
                 if valid_phrase_pair(matrix, v_pivot, h_pivot, v_width, h_width):
                     if e_phrase not in e_p:
                         # English phrase not found yet, so add new entry
-                        e_p, f_p, e_freq, f_freq, c_freq, p_a = new_entry(e_p, f_p, e_freq, f_freq, c_freq, p_a, e_phrase, f_phrase)
+                        e_p, f_p, e_freq, f_freq, c_freq, p_a = new_entry(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase)
                     else:
                         # English phrase found, now check for foreign phrase
                         exists = False
@@ -122,7 +120,7 @@ def phrase_extraction(e, f, a):
                                 break
                         if not exists:
                             # Foreign phrase not found yet, so add new entry
-                            e_p, f_p, e_freq, f_freq, c_freq, p_a = new_entry(e_p, f_p, e_freq, f_freq, c_freq, p_a, e_phrase, f_phrase)
+                            e_p, f_p, e_freq, f_freq, c_freq, p_a = new_entry(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase)
 
                     # Update frequencies
                     e_freq, f_freq, c_freq = update_frequencies(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase)
@@ -158,6 +156,6 @@ def phrase_extraction(e, f, a):
                     else:
                         h_width += 1
 
-
+    return e_p, f_p, e_freq, f_freq, c_freq
 
 
