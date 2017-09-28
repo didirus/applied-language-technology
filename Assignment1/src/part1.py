@@ -32,12 +32,22 @@ def valid_phrase_pair(matrix, v_pivot, h_pivot, v_width, h_width):
 
     left_matrix = matrix[v_pivot:v_pivot+v_width, 0:h_pivot]
     right_matrix = matrix[v_pivot:v_pivot+v_width, h_pivot+h_width:shape_matrix[1]]
-
+    inside_mat_flag=False
     inside_matrix = matrix[v_pivot:v_pivot+v_width,h_pivot:h_pivot+h_width]
-    
-    print (inside_matrix)
-    if np.sum(top_matrix)+np.sum(bottom_matrix)+np.sum(right_matrix)+np.sum(left_matrix) > 0:
+    for i in range(len(inside_matrix)):
+        if np.sum(inside_matrix[i]) == 0:
+            inside_mat_flag=True
+
+    for i in range(inside_matrix.shape[1]):
+        if np.sum(inside_matrix[:, i])==0:
+            inside_mat_flag=True
+
+    # print (inside_matrix)
+    if np.sum(top_matrix)+np.sum(bottom_matrix)+np.sum(right_matrix)+np.sum(left_matrix) > 0 :
         print('False', v_pivot, h_pivot, v_width, h_width)
+        return False
+    elif inside_mat_flag:
+        print('inside mat False', v_pivot, h_pivot, v_width, h_width)
         return False
     else:
         print('True', v_pivot, h_pivot, v_width, h_width)
