@@ -3,7 +3,6 @@ import numpy as np
 
 def update_frequencies(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase):
     # TODO if computational problems, setup for new entry frequencie, no lookup necessary
-
     e_indices = np.where(e_p == e_phrase)
     f_indices = np.where(f_p == f_phrase)
 
@@ -35,10 +34,10 @@ def valid_phrase_pair(matrix, v_pivot, h_pivot, v_width, h_width):
     right_matrix = matrix[v_pivot:v_pivot+v_width, h_pivot+h_width:shape_matrix[1]]
 
     if np.sum(top_matrix)+np.sum(bottom_matrix)+np.sum(right_matrix)+np.sum(left_matrix) > 0:
-        # print('False', v_pivot, h_pivot, v_width, h_width)
+        print('False', v_pivot, h_pivot, v_width, h_width)
         return False
     else:
-        # print('True', v_pivot, h_pivot, v_width, h_width)
+        print('True', v_pivot, h_pivot, v_width, h_width)
         return True
 
 
@@ -71,9 +70,13 @@ def phrase_extraction(e, f, a):
 
     # For every sentence for e, f, and a...
     for i in range(len(e)):
-        print('\rRow: ', i, end= '', flush=True)
+
+
         # Split the lines
         e_s, f_s, alignment = process_sentence(e, f, a, i)
+        print('Row: ', i, ': ', len(e_s))
+        if i == 9:
+            print('ello')
         # Create the alignment matrix
         matrix = create_matrix(alignment, e_s, f_s)
         # print(matrix)
@@ -84,7 +87,10 @@ def phrase_extraction(e, f, a):
         # Start with a vertical pivot which is just going from top to down in the matrix
         for v_pivot in range(len(e_s)):
             # The horizontal pivot is the location where the first alignment is found
-            h_pivot = np.where(matrix[v_pivot, :] == 1)[0][0]
+            hit = np.where(matrix[v_pivot, :] == 1)[0]
+            if len(hit) < 1:
+                continue
+            h_pivot = hit[0]
             # Set the flag for 'growing' to True
             grow = True
             # While we are looking for phrases, we are growing our search space bounded by the limit
@@ -126,12 +132,20 @@ def phrase_extraction(e, f, a):
                         v_width = min(h_width, v_width) + 1
 
                     # If not yet pair found and search space was already max: stop growing
-                    if (v_width == grow_limit and h_width == grow_limit) or (h_pivot+h_width >= len(f_s) and v_pivot + v_width >= len(e_s)):
+                    if (v_width > grow_limit and h_width > grow_limit) or (h_pivot+h_width >= len(f_s) and v_pivot + v_width >= len(e_s)):
                         # print('not grow')
                         h_width = 1
                         v_width = 1
                         grow = False
 
+                elif (v_width == grow_limit and h_width == grow_limit) or \
+                        (h_pivot+h_width >= len(f_s) and v_pivot + v_width >= len(e_s)) or \
+                        (v_width == grow_limit and h_pivot + h_width >= len(f_s)) or \
+                        (h_width == grow_limit and v_pivot + v_width >= len(e_s)):
+                        # print('not grow')
+                        h_width = 1
+                        v_width = 1
+                        grow = False
                 # If not yet pair found: grow search space
                 else:
                     # print('grow')
