@@ -42,15 +42,11 @@ def valid_phrase_pair(matrix, v_pivot, h_pivot, v_width, h_width):
         if np.sum(inside_matrix[:, i])==0:
             inside_mat_flag=True
 
-    # print (inside_matrix)
     if np.sum(top_matrix)+np.sum(bottom_matrix)+np.sum(right_matrix)+np.sum(left_matrix) > 0 :
-        # print('False', v_pivot, h_pivot, v_width, h_width)
         return False
     elif inside_mat_flag:
-        # print('inside mat False', v_pivot, h_pivot, v_width, h_width)
         return False
     else:
-        # print('True', v_pivot, h_pivot, v_width, h_width)
         return True
 
 
@@ -84,8 +80,6 @@ def phrase_extraction(e, f, a):
     # For every sentence for e, f, and a...
     for i in range(len(e)):
 
-        # if i==157:
-        #     print ('hello')
         # Split the lines
         e_s, f_s, alignment = process_sentence(e, f, a, i)
         print('Row: ', i, ': ', len(e_s))
@@ -111,7 +105,6 @@ def phrase_extraction(e, f, a):
                 temp_e_p = list(range(v_pivot, v_pivot+v_width))
                 temp_f_p = list(range(h_pivot, h_pivot+h_width))
                 # Get total string of phrase (both languages)
-                # print(v_pivot, h_pivot, v_width, h_width)
                 e_phrase = ' '.join(e_s[temp_e_p])
                 f_phrase = ' '.join(f_s[temp_f_p])
                 # If a valid phrase pair is found: update arrays
@@ -134,26 +127,15 @@ def phrase_extraction(e, f, a):
 
                     # Update frequencies
                     e_freq, f_freq, c_freq = update_frequencies(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase)
-                    # print('valid phrase pair so update both hori and verti')
-
-                    # if h_pivot+h_width < len(f_s):
-                    #     h_width = min(h_width, v_width) + 1
-                    # if v_pivot + v_width < len(e_s):
-                    #     v_width = min(h_width, v_width) + 1
 
                     if h_width >= grow_limit or v_width >= grow_limit:
-                        # print('a')
                         h_width = 1
                         v_width = 1
                         grow = False
                     else:
-                        # print('b')
-
                         # If not yet pair found and search space was already max: stop growing
                         if (v_width > grow_limit and h_width > grow_limit) or \
                                 (h_pivot+h_width >= len(f_s) or v_pivot + v_width >= len(e_s)):
-                            # print('not grow')
-                            # print('c')
                             h_width = 1
                             v_width = 1
                             grow = False
@@ -165,22 +147,16 @@ def phrase_extraction(e, f, a):
                         (h_pivot+h_width >= len(f_s) and v_pivot + v_width >= len(e_s)) or \
                         (v_width == grow_limit and h_pivot + h_width >= len(f_s)) or \
                         (h_width == grow_limit and v_pivot + v_width >= len(e_s)):
-                        # print('not grow')
-                        # print('d')
+
                         h_width = 1
                         v_width = 1
                         grow = False
                 # If not yet pair found: grow search space
                 else:
-                    # print('grow')
                     if h_width == grow_limit or h_pivot+h_width >= len(f_s):
-                        # print('end of hori growing, so only grow verti')
-                        # print('e')
                         h_width = 1
                         v_width += 1
                     else:
-                        # print('f')
-                        # print('growing, so only grow hori')
                         h_width += 1
 
 
