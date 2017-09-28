@@ -25,7 +25,7 @@ align = f_align.readlines()
 start = timeit.default_timer()
 part1.phrase_extraction(de, en, align)
 stop = timeit.default_timer()
-print stop - start
+print(stop - start)
 
 # part2.phrase_probabilities()
 # part3.lexical_probabilities()
