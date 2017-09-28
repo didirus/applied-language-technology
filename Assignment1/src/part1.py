@@ -33,6 +33,9 @@ def valid_phrase_pair(matrix, v_pivot, h_pivot, v_width, h_width):
     left_matrix = matrix[v_pivot:v_pivot+v_width, 0:h_pivot]
     right_matrix = matrix[v_pivot:v_pivot+v_width, h_pivot+h_width:shape_matrix[1]]
 
+    inside_matrix = matrix[v_pivot:v_pivot+v_width,h_pivot:h_pivot+h_width]
+    
+    print (inside_matrix)
     if np.sum(top_matrix)+np.sum(bottom_matrix)+np.sum(right_matrix)+np.sum(left_matrix) > 0:
         print('False', v_pivot, h_pivot, v_width, h_width)
         return False
