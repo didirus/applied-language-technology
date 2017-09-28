@@ -28,5 +28,5 @@ d = np.array(['rs','r','b'])
 f_e = np.array([1,2,3],dtype=float)
 f_d = np.array([3,2,1],dtype=float)
 c_fe = np.array([1,2,1],dtype=float)
-phrase_probabilities(e=e,d=d,f_e=f_e,f_d=f_d,c_fe=c_fe)
+# phrase_probabilities(e=e,d=d,f_e=f_e,f_d=f_d,c_fe=c_fe)
 

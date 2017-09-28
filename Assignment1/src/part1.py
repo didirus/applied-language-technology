@@ -109,7 +109,7 @@ def phrase_extraction(e, f, a):
                 if valid_phrase_pair(matrix, v_pivot, h_pivot, v_width, h_width):
                     if e_phrase not in e_p:
                         # English phrase not found yet, so add new entry
-                        e_p, f_p, e_freq, f_freq, c_freq, p_a = new_entry(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase)
+                        e_p, f_p, e_freq, f_freq, c_freq = new_entry(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase)
                     else:
                         # English phrase found, now check for foreign phrase
                         exists = False
@@ -120,7 +120,7 @@ def phrase_extraction(e, f, a):
                                 break
                         if not exists:
                             # Foreign phrase not found yet, so add new entry
-                            e_p, f_p, e_freq, f_freq, c_freq, p_a = new_entry(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase)
+                            e_p, f_p, e_freq, f_freq, c_freq = new_entry(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase)
 
                     # Update frequencies
                     e_freq, f_freq, c_freq = update_frequencies(e_p, f_p, e_freq, f_freq, c_freq, e_phrase, f_phrase)
@@ -155,6 +155,7 @@ def phrase_extraction(e, f, a):
                         v_width += 1
                     else:
                         h_width += 1
+
 
     return e_p, f_p, e_freq, f_freq, c_freq
 
