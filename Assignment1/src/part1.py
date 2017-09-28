@@ -109,7 +109,6 @@ def phrase_extraction(e, f, a):
                 f_phrase = ' '.join(f_s[temp_f_p])
                 # If a valid phrase pair is found: update arrays
                 if valid_phrase_pair(matrix, v_pivot, h_pivot, v_width, h_width):
-                    # print('valid')
                     if e_phrase not in e_p:
                         # English phrase not found yet, so add new entry
                         e_p, f_p, e_freq, f_freq, c_freq, p_a = new_entry(e_p, f_p, e_freq, f_freq, c_freq, p_a, e_phrase, f_phrase)
