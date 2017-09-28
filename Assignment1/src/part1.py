@@ -84,12 +84,11 @@ def phrase_extraction(e, f, a):
     # For every sentence for e, f, and a...
     for i in range(len(e)):
 
-
+        if i==37:
+            print ('hello')
         # Split the lines
         e_s, f_s, alignment = process_sentence(e, f, a, i)
         print('Row: ', i, ': ', len(e_s))
-        if i == 9:
-            print('ello')
         # Create the alignment matrix
         matrix = create_matrix(alignment, e_s, f_s)
         # print(matrix)

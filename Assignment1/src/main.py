@@ -4,6 +4,9 @@
 # 2. Phrase translation probabilities
 # 3. Lexical translation probabilities (KMO approach)
 # 4. The resulting files of (1-3) can be combined into one single file of the form:
+import timeit
+
+
 
 import part1
 # import part2
@@ -18,7 +21,12 @@ en = f_en.readlines()
 de = f_de.readlines()
 align = f_align.readlines()
 
+
+start = timeit.default_timer()
 part1.phrase_extraction(de, en, align)
+stop = timeit.default_timer()
+print stop - start
+
 # part2.phrase_probabilities()
 # part3.lexical_probabilities()
 # part4.combine()
