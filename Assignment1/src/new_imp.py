@@ -1,4 +1,3 @@
-
 import codecs
 from collections import Counter
 import time
@@ -25,6 +24,7 @@ def check1(de_pos, en_pos, en_alignment_dict):
 
     return check and min_one
 
+
 def check2(de_pos, en_pos, de_alignment_dict):
     '''
     check that no foreign words in the phrase pair are aligned to words outside it
@@ -42,18 +42,23 @@ def check2(de_pos, en_pos, de_alignment_dict):
 
     return check and min_one
 
+
 def alignstowords(positions, de_line, en_line):
     '''
     converter function numbers to words
+    :param positions: positions of the german and english sentence
+    :param de_line: german line
+    :param en_line: english line
+    :return: tuple in text
     '''
-
     return (' '.join(map(de_line.__getitem__, positions[0])), ' '.join(map(en_line.__getitem__, positions[1])))
+
 
 def update_word_count(de_line, en_line):
     '''
     updates word counts. Used to compute lexical probabilities.
     '''
-    # global arguments can use it anywhere after this
+
     global de_word_freq
     global en_word_freq
     global joint_word_freq
@@ -83,13 +88,11 @@ def update_word_count(de_line, en_line):
     return
 
 
-
-
 def update_phrase_counts(de_phrase_str, en_phrase_str):
     '''
     updates word and phrase counts
     '''
-    # global arguments can use it anywhere after this
+
     global joint_freq
     global de_freq
     global en_freq
@@ -101,7 +104,8 @@ def update_phrase_counts(de_phrase_str, en_phrase_str):
 
     return
 
-# TODO prob function
+
+# TODO prob function ->done
 def translation_probs(t):
     p_f_e = joint_freq[t] / float(en_freq[en_phrase_str])
     p_e_f = joint_freq[t] / float(de_freq[de_phrase_str])
@@ -110,15 +114,92 @@ def translation_probs(t):
 
 
 
-# TODO Lex prob function
+# TODO dump data in file ->done
 
+def dump_data(t):
+    '''
+    dump into files for submission
+    '''
+    f_ext_out = codecs.open('../pickled_files/phrase_extraction.out', 'wb', encoding='utf-8')
+    f_phrase_out = codecs.open('../pickled_files/phrase_probs.out', 'wb', encoding='utf-8')
+    f_lex_out = codecs.open('../pickled_files/lexical_probs.out', 'wb', encoding='utf-8')
+    f_comb_out = codecs.open('../pickled_files/combined.out', 'wb', encoding='utf-8')
+
+    global lex_e
+    global lex_f
+    global phrase_probs
+    global joint_freq
+    global de_freq
+    global en_freq
+
+    common_de_text = ''
+    common_de_text += t[0]
+    common_de_text += ' ||| '
+    common_de_text += t[1]
+    common_de_text += ' ||| '
+
+    frequency = str(de_freq[t[0]])
+    frequency += ' '
+    frequency += str(en_freq[t[1]])
+    frequency += ' '
+    frequency += str(joint_freq[t])
+
+    translation_prob = str(phrase_probs[t][0])
+    translation_prob += ' '
+    translation_prob += str(phrase_probs[t][1])
+
+    lex_prob = translation_prob
+    lex_prob += ' '
+    lex_prob += str(lex_f[t])
+    lex_prob += ' '
+    lex_prob += str(lex_e[t])
+
+    f_ext_out.write(common_de_text + frequency + '\n')
+    f_phrase_out.write(common_de_text + translation_prob + '\n')
+    f_lex_out.write(common_de_text + lex_prob + '\n')
+    f_comb_out.write(common_de_text + lex_prob + ' ||| ' + frequency + '\n')
+
+    return
+
+# TODO Lex prob function-> done
+
+def lexical_prob(phrase_aligns, f_start, e_start, f_word_freq, f_phrase, e_phrase, direct):
+    '''
+    calculate the lexical probability of a phrase
+    :param phrase_aligns: {source positions : list of foreign aligned positions}
+    :param f_start: starting position of the foreign phrase in the original sentence
+    :param e_start: starting position of the source phrase in the original sentence
+    :param f_word_freq: foreign word count
+    :param f_phrase: foreign phrase
+    :param e_phrase: source phrase
+    :return: lex probability
+    '''
+
+    global joint_word_freq
+
+    prob = 1
+    for e_pos, f_aligns in phrase_aligns.iteritems():
+        if f_aligns:
+            if direct:
+                prob *= sum(map(lambda x: joint_word_freq[(f_phrase[x - f_start], e_phrase[e_pos - e_start])] \
+                                          / float(f_word_freq[f_phrase[x - f_start]]), f_aligns)) / float(len(f_aligns))
+            else:
+                prob *= sum(map(lambda x: joint_word_freq[(f_phrase[e_pos - f_start], e_phrase[x - e_start])] \
+                                          / float(f_word_freq[e_phrase[x - e_start]]), f_aligns)) / float(len(f_aligns))
+        else:
+            if direct:
+                prob *= joint_word_freq[(nil, e_phrase[e_pos - e_start])] / float(f_word_freq[nil])
+            else:
+                prob *= joint_word_freq[(f_phrase[e_pos - f_start], nil)] / float(f_word_freq[nil])
+
+    return prob
 
 
 if __name__ == '__main__':
 
     start = time.time()
 
-    # debug file paths
+    #input data files
     en_filepath = '../data/file.en'
     de_candilepath = '../data/file.de'
     align_filepath = '../data/file.aligned'
@@ -135,7 +216,6 @@ if __name__ == '__main__':
     phrases_str = set()
     data_alignments = dict()
 
-
     # w counters
     de_word_freq = Counter()
     en_word_freq = Counter()
@@ -146,9 +226,7 @@ if __name__ == '__main__':
     de_freq = Counter()
     en_freq = Counter()
 
-
-
-    # NiL word
+    # NiL word for empty alignments
     nil = '#NiL#'
 
     data_alignments = defaultdict(list)
@@ -157,7 +235,7 @@ if __name__ == '__main__':
     for line in f_en:
         # print (line)
         # read english line
-        en_line = line.strip().split() # whitespace tokenization
+        en_line = line.strip().split()  # whitespace tokenization
 
         # read germ line
         de_line = f_de.readline().strip().split()
@@ -165,19 +243,19 @@ if __name__ == '__main__':
         en_alignment_dict = defaultdict(list)
         de_alignment_dict = defaultdict(list)
 
-        for de_a,en_a in map(lambda x:x.split('-'),f_align.readline().strip().split()):
+        for de_a, en_a in map(lambda x: x.split('-'), f_align.readline().strip().split()):
             de_alignment_dict[int(de_a)].append(int(en_a))
             en_alignment_dict[int(en_a)].append(int(de_a))
 
         update_word_count(de_line, en_line)
 
         # all possible germ phrases
-        de_cand_phrases = [range(i,i+j+1) for i,_ in enumerate(de_line) \
-                                for j in range(min([len(de_line), max_phrase_len, len(de_line)-i]))]
+        de_cand_phrases = [range(i, i + j + 1) for i, _ in enumerate(de_line) \
+                           for j in range(min([len(de_line), max_phrase_len, len(de_line) - i]))]
         # print (de_cand_phrases)
         # all possible en phrases
-        en_cand_phrases = [range(i,i+j+1) for i,_ in enumerate(en_line) \
-                                for j in range(min([len(en_line), max_phrase_len, len(en_line)-i]))]
+        en_cand_phrases = [range(i, i + j + 1) for i, _ in enumerate(en_line) \
+                           for j in range(min([len(en_line), max_phrase_len, len(en_line) - i]))]
         # print (en_cand_phrases)
         # sleep(5)
 
@@ -189,21 +267,22 @@ if __name__ == '__main__':
 
                     if translation not in phrases_str:
                         phrases_str.add(translation)
-                        phrases.append((de_cand,en_cand))
+                        phrases.append((de_cand, en_cand))
 
                     de_phrase_alignments = {pos: de_alignment_dict[pos] for pos in de_cand}
                     en_phrase_alignments = {pos: en_alignment_dict[pos] for pos in en_cand}
                     # print (de_phrase_alignments)
                     # print (en_phrase_alignments)
                     # sleep(5)
-                    data_alignments[(translation[0], translation[1])].append((de_phrase_alignments, en_phrase_alignments))
+                    data_alignments[(translation[0], translation[1])].append(
+                        (de_phrase_alignments, en_phrase_alignments))
                     update_phrase_counts(translation[0], translation[1])
                     # print (data_alignments)
                     # sleep(5)
 
-        count__+=1
+        count__ += 1
 
-        if (count__%100) == 0:
+        if (count__ % 100) == 0:
             # print (phrases)
             # sleep(10)
             # print (phrases_str)
@@ -214,8 +293,7 @@ if __name__ == '__main__':
 
             print (count__)
 
-
-    print('time:', time.time()-start)
+    print('time:', time.time() - start)
     # sleep(5)
     # print (len(phrases))
     # sleep(5)
@@ -232,10 +310,26 @@ if __name__ == '__main__':
         t = (de_phrase_str, en_phrase_str)
         phrase_probs[t] = translation_probs(t)
 
+        for de_phrase_aligns, en_phrase_aligns in data_alignments[t]:
+            de_start = min(de_phrase_aligns.keys())
+            en_start = min(en_phrase_aligns.keys())
 
+            prob = lexical_prob(en_phrase_aligns, de_start, en_start, de_word_freq, de_phrase_str.split(),
+                                en_phrase_str.split(), True)
+            lex_e[t] = max([prob, lex_e[t]])
 
-    # print (phrase_probs)
-    # print (lex_e)
-    # sleep(10)
-    # print (lex_f)
+            prob = lexical_prob(de_phrase_aligns, de_start, en_start, en_word_freq, de_phrase_str.split(),
+                                en_phrase_str.split(), False)
+            lex_f[t] = max([prob, lex_f[t]])
 
+        if (i + 1) % 100 == 0:
+            sys.stdout.write(str(i + 1) + ' out of ' + str(len(phrases_str)) + '\r')
+            sys.stdout.flush()
+
+            # print (phrase_probs)
+            # print (lex_e)
+            # sleep(10)
+            # print (lex_f)
+    for de_phrase_str, en_phrase_str in phrases_str:
+        t = (de_phrase_str, en_phrase_str)
+        dump_data(t)
