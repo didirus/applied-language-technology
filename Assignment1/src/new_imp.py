@@ -105,8 +105,8 @@ def update_phrase_counts(de_phrase_str, en_phrase_str):
     return
 
 
-# TODO prob function ->done
 def translation_probs(t):
+
     p_f_e = joint_freq[t] / float(en_freq[en_phrase_str])
     p_e_f = joint_freq[t] / float(de_freq[de_phrase_str])
 
@@ -120,10 +120,10 @@ def dump_data(t):
     '''
     dump into files for submission
     '''
-    f_ext_out = codecs.open('../pickled_files/phrase_extraction.out', 'wb', encoding='utf-8')
-    f_phrase_out = codecs.open('../pickled_files/phrase_probs.out', 'wb', encoding='utf-8')
-    f_lex_out = codecs.open('../pickled_files/lexical_probs.out', 'wb', encoding='utf-8')
-    f_comb_out = codecs.open('../pickled_files/combined.out', 'wb', encoding='utf-8')
+    global f_ext_out
+    global f_phrase_out
+    global f_lex_out
+    global f_comb_out
 
     global lex_e
     global lex_f
@@ -252,12 +252,10 @@ if __name__ == '__main__':
         # all possible germ phrases
         de_cand_phrases = [range(i, i + j + 1) for i, _ in enumerate(de_line) \
                            for j in range(min([len(de_line), max_phrase_len, len(de_line) - i]))]
-        # print (de_cand_phrases)
         # all possible en phrases
         en_cand_phrases = [range(i, i + j + 1) for i, _ in enumerate(en_line) \
                            for j in range(min([len(en_line), max_phrase_len, len(en_line) - i]))]
-        # print (en_cand_phrases)
-        # sleep(5)
+
 
         for en_cand in en_cand_phrases:
             for de_cand in de_cand_phrases:
@@ -271,37 +269,28 @@ if __name__ == '__main__':
 
                     de_phrase_alignments = {pos: de_alignment_dict[pos] for pos in de_cand}
                     en_phrase_alignments = {pos: en_alignment_dict[pos] for pos in en_cand}
-                    # print (de_phrase_alignments)
-                    # print (en_phrase_alignments)
-                    # sleep(5)
                     data_alignments[(translation[0], translation[1])].append(
                         (de_phrase_alignments, en_phrase_alignments))
                     update_phrase_counts(translation[0], translation[1])
-                    # print (data_alignments)
-                    # sleep(5)
+
 
         count__ += 1
 
-        if (count__ % 100) == 0:
-            # print (phrases)
-            # sleep(10)
-            # print (phrases_str)
-            # sleep(10)
-            # print (data_alignments)
-            # sleep(10)
-            # break
+        if (count__ % 1000) == 0:
 
-            print (count__)
+            print ("line no.:",count__)
 
     print('time:', time.time() - start)
-    # sleep(5)
-    # print (len(phrases))
-    # sleep(5)
-    # print (phrases_str)
 
-    # # lexical probabilities
+    # for dumps
+    f_ext_out = codecs.open('../pickled_files/phrase_extraction.out', 'wb', encoding='utf-8')
+    f_phrase_out = codecs.open('../pickled_files/phrase_probs.out', 'wb', encoding='utf-8')
+    f_lex_out = codecs.open('../pickled_files/lexical_probs.out', 'wb', encoding='utf-8')
+    f_comb_out = codecs.open('../pickled_files/combined.out', 'wb', encoding='utf-8')
+
+    # lexical probabilities
     word_probs = dict()
-    # # probab results
+    # probab results
     lex_e = defaultdict(int)
     lex_f = defaultdict(int)
 
@@ -323,13 +312,8 @@ if __name__ == '__main__':
             lex_f[t] = max([prob, lex_f[t]])
 
         if (i + 1) % 100 == 0:
-            sys.stdout.write(str(i + 1) + ' out of ' + str(len(phrases_str)) + '\r')
-            sys.stdout.flush()
+            print(str(i + 1), '/ ' ,len(phrases_str))
 
-            # print (phrase_probs)
-            # print (lex_e)
-            # sleep(10)
-            # print (lex_f)
     for de_phrase_str, en_phrase_str in phrases_str:
         t = (de_phrase_str, en_phrase_str)
         dump_data(t)
