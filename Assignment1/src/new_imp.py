@@ -107,6 +107,7 @@ def update_phrase_counts(de_phrase_str, en_phrase_str):
 
 # TODO prob function ->done
 def translation_probs(t):
+
     p_f_e = joint_freq[t] / float(en_freq[en_phrase_str])
     p_e_f = joint_freq[t] / float(de_freq[de_phrase_str])
 
@@ -120,10 +121,10 @@ def dump_data(t):
     '''
     dump into files for submission
     '''
-    f_ext_out = codecs.open('../pickled_files/phrase_extraction.out', 'wb', encoding='utf-8')
-    f_phrase_out = codecs.open('../pickled_files/phrase_probs.out', 'wb', encoding='utf-8')
-    f_lex_out = codecs.open('../pickled_files/lexical_probs.out', 'wb', encoding='utf-8')
-    f_comb_out = codecs.open('../pickled_files/combined.out', 'wb', encoding='utf-8')
+    global f_ext_out
+    global f_phrase_out
+    global f_lex_out
+    global f_comb_out
 
     global lex_e
     global lex_f
@@ -298,6 +299,10 @@ if __name__ == '__main__':
     # print (len(phrases))
     # sleep(5)
     # print (phrases_str)
+    f_ext_out = codecs.open('../pickled_files/phrase_extraction.out', 'wb', encoding='utf-8')
+    f_phrase_out = codecs.open('../pickled_files/phrase_probs.out', 'wb', encoding='utf-8')
+    f_lex_out = codecs.open('../pickled_files/lexical_probs.out', 'wb', encoding='utf-8')
+    f_comb_out = codecs.open('../pickled_files/combined.out', 'wb', encoding='utf-8')
 
     # # lexical probabilities
     word_probs = dict()
@@ -323,9 +328,7 @@ if __name__ == '__main__':
             lex_f[t] = max([prob, lex_f[t]])
 
         if (i + 1) % 100 == 0:
-            sys.stdout.write(str(i + 1) + ' out of ' + str(len(phrases_str)) + '\r')
-            sys.stdout.flush()
-
+            print(str(i + 1),"/",len(phrases_str))
             # print (phrase_probs)
             # print (lex_e)
             # sleep(10)
