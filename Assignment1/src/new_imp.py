@@ -282,6 +282,7 @@ if __name__ == '__main__':
 
     print('time:', time.time() - start)
 
+
     # for dumps
     f_ext_out = codecs.open('../pickled_files/phrase_extraction.out', 'wb', encoding='utf-8')
     f_phrase_out = codecs.open('../pickled_files/phrase_probs.out', 'wb', encoding='utf-8')
@@ -313,6 +314,7 @@ if __name__ == '__main__':
 
         if (i + 1) % 100 == 0:
             print(str(i + 1), '/ ' ,len(phrases_str))
+
 
     for de_phrase_str, en_phrase_str in phrases_str:
         t = (de_phrase_str, en_phrase_str)
