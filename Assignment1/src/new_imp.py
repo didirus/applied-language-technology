@@ -104,17 +104,15 @@ def update_phrase_counts(de_phrase_str, en_phrase_str):
 
     return
 
-
+"""
+PART-3
+"""
 def translation_probs(t):
 
     p_f_e = joint_freq[t] / float(en_freq[en_phrase_str])
     p_e_f = joint_freq[t] / float(de_freq[de_phrase_str])
 
     return (p_f_e, p_e_f)
-
-
-
-# TODO dump data in file ->done
 
 def dump_data(t):
     '''
@@ -160,9 +158,9 @@ def dump_data(t):
     f_comb_out.write(common_de_text + lex_prob + ' ||| ' + frequency + '\n')
 
     return
-
-# TODO Lex prob function-> done
-
+"""
+PART-3
+"""
 def lexical_prob(phrase_aligns, f_start, e_start, f_word_freq, f_phrase, e_phrase, direct):
     '''
     calculate the lexical probability of a phrase
@@ -231,6 +229,10 @@ if __name__ == '__main__':
 
     data_alignments = defaultdict(list)
     count__ = 0
+
+    """
+    PART:1
+    """
     print 'Extract phrase pairs'
     for line in f_en:
         # print (line)
@@ -294,7 +296,6 @@ if __name__ == '__main__':
     # probab results
     lex_e = defaultdict(int)
     lex_f = defaultdict(int)
-
     phrase_probs = dict()
     for i, (de_phrase_str, en_phrase_str) in enumerate(phrases_str):
         t = (de_phrase_str, en_phrase_str)
