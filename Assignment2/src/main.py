@@ -7,7 +7,7 @@ from operator import div
 import pickle
 
 
-def compute_probs(count_LR_m, count_LR_s, count_LR_dl, count_LR_dr,
+def probabs(count_LR_m, count_LR_s, count_LR_dl, count_LR_dr,
                   count_RL_m, count_RL_s, count_RL_dl, count_RL_dr,
                   total_LR, total_RL, phrase_str):
     p1 = check_div(div)(count_LR_m[phrase_str], float(total_LR[phrase_str]))
@@ -31,7 +31,7 @@ def check_div(f):
 
     return helper
 
-def save_to_file(f_out, p1, p2, p3, p4, p5, p6, p7, p8, phrase):
+def dump_file(f_out, p1, p2, p3, p4, p5, p6, p7, p8, phrase):
     sep = '|||'
     probs_str = map(str, [p1, p2, p3, p4, p5, p6, p7, p8])
     f_out.write(' '.join([phrase[0], sep, phrase[1], sep] + probs_str + ['\n']))
