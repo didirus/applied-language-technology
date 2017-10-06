@@ -266,7 +266,44 @@ if __name__ == '__main__':
     f_phrase.close()
     f_word.close()
     print('time:', time.time() - start)
-        
+
+    #pickle the dictionaries
+    pickle.dump(count_phrase_LR_m,open('../pickled/count_phrase_LR_m.pickle','wb'))
+    pickle.dump(count_phrase_LR_s, open('../pickled/count_phrase_LR_s.pickle', 'wb'))
+    pickle.dump(count_phrase_LR_dl, open('../pickled/count_phrase_LR_dl.pickle', 'wb'))
+    pickle.dump(count_phrase_LR_dr, open('../pickled/count_phrase_LR_dr.pickle', 'wb'))
+    pickle.dump(count_phrase_RL_m, open('../pickled/count_phrase_RL_m.pickle', 'wb'))
+    pickle.dump(count_phrase_RL_s, open('../pickled/count_phrase_RL_s.pickle', 'wb'))
+    pickle.dump(count_phrase_RL_dl, open('../pickled/count_phrase_RL_dl.pickle', 'wb'))
+    pickle.dump(count_phrase_RL_dr, open('../pickled/count_phrase_RL_dr.pickle', 'wb'))
+    pickle.dump(total_phrase_LR, open('../pickled/total_phrase_LR.pickle', 'wb'))
+    pickle.dump(total_phrase_RL, open('../pickled/total_phrase_RL.pickle', 'wb'))
+    pickle.dump(count_word_LR_m, open('../pickled/count_word_LR_m.pickle', 'wb'))
+    pickle.dump(count_word_LR_s, open('../pickled/count_word_LR_s.pickle', 'wb'))
+    pickle.dump(count_word_LR_dl, open('../pickled/count_word_LR_dl.pickle', 'wb'))
+    pickle.dump(count_word_LR_dr, open('../pickled/count_word_LR_dr.pickle', 'wb'))
+    pickle.dump(count_word_RL_m, open('../pickled/count_word_RL_m.pickle', 'wb'))
+    pickle.dump(count_word_RL_s, open('../pickled/count_word_RL_s.pickle', 'wb'))
+    pickle.dump(count_word_RL_dl, open('../pickled/count_word_RL_dl.pickle', 'wb'))
+    pickle.dump(count_word_RL_dr, open('../pickled/count_word_RL_dr.pickle', 'wb'))
+    pickle.dump(total_word_LR, open('../pickled/total_word_LR.pickle', 'wb'))
+    pickle.dump(total_word_RL, open('../pickled/total_word_RL.pickle', 'wb'))
+    # pickle.dump(, open('../pickled/.pickle', 'wb'))
+    # pickle.dump(, open('../pickled/.pickle', 'wb'))
+    # pickle.dump(, open('../pickled/.pickle', 'wb'))
+    # pickle.dump(, open('../pickled/.pickle', 'wb'))
+    # pickle.dump(, open('../pickled/.pickle', 'wb'))
+    # pickle.dump(, open('../pickled/.pickle', 'wb'))
+    # pickle.dump(, open('../pickled/.pickle', 'wb'))
+    # pickle.dump(, open('../pickled/.pickle', 'wb'))
+    # pickle.dump(, open('../pickled/.pickle', 'wb'))
+    # pickle.dump(, open('../pickled/.pickle', 'wb'))
+    # pickle.dump(, open('../pickled/.pickle', 'wb'))
+    # pickle.dump(, open('../pickled/.pickle', 'wb'))
+    # pickle.dump(, open('../pickled/.pickle', 'wb'))
+
+
+
 
 
 
