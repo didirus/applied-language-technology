@@ -237,21 +237,21 @@ def phrase_extraction(line_en, line_de, line_align, max_phrase_len):
                             for j in range(min([len(en_sent), max_phrase_len, len(en_sent) - i]))]
 
     for en_cand in en_candidate_phrases:
-        for de_f in de_candidate_phrases:
-            if check1(de_f, en_cand, en_alignment_dict) and check2(de_f, en_cand, de_alignment_dict):
+        for de_cand in de_candidate_phrases:
+            if check1(de_cand, en_cand, en_alignment_dict) and check2(de_cand, en_cand, de_alignment_dict):
 
-                translation = alignstowords((de_f, en_cand), de_sent, en_sent)
+                translation = alignstowords((de_cand, en_cand), de_sent, en_sent)
                 if translation not in phrases_str:
                     phrases_str.add(translation)
-                    phrases.append((de_f, en_cand))
+                    phrases.append((de_cand, en_cand))
 
-                de_phrase_alignments = {pos: de_alignment_dict[pos] for pos in de_f}
+                de_phrase_alignments = {pos: de_alignment_dict[pos] for pos in de_cand}
                 en_phrase_alignments = {pos: en_alignment_dict[pos] for pos in en_cand}
                 data_alignments[(translation[0], translation[1])].append(
                     (de_phrase_alignments, en_phrase_alignments))
 
-                phrases_begin[min(en_cand)].append((de_f, en_cand))
-                phrases_end[max(en_cand)].append((de_f, en_cand))
+                phrases_begin[min(en_cand)].append((de_cand, en_cand))
+                phrases_end[max(en_cand)].append((de_cand, en_cand))
 
 
 
