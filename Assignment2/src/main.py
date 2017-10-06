@@ -230,4 +230,8 @@ if __name__ == '__main__':
             # phrase_len_reor_d[german_len] += N_LR_phrase_discontinuous_r + N_LR_phrase_discontinuous_l + \
             #                                  N_RL_phrase_discontinuous_r + N_RL_phrase_discontinuous_l
         #todo: probablities
+        for ph in count_phrase_LR_m.keys():
+            pi1,p2,p3,p4,p5,p6,p7,p8 = probabs(count_phrase_LR_m,count_phrase_LR_s,count_phrase_LR_dl,
+                                               count_phrase_LR_dr,count_phrase_RL_m,count_phrase_RL_s,count_phrase_RL_dl,
+                                               count_phrase_RL_dr,total_phrase_LR,tot)
         #todo: save to file
