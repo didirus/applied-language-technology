@@ -41,6 +41,7 @@ def dump_file(f_out, p1, p2, p3, p4, p5, p6, p7, p8, phrase):
 
 
 if __name__ == '__main__':
+    start = time.time()
     print('reading the files')
     en_filepath = '../../Assignment1/data/file.en'
     de_filepath = '../../Assignment1/data/file.de'
@@ -105,7 +106,7 @@ if __name__ == '__main__':
 
     print('getting the phrases and counts')
     for i, line_en in enumerate(f_en):
-        if (i + 1) % 1000 == 0:
+        if (i + 1) % 5000 == 0:
             print('line no: ', i + 1)
             break
         line_de = f_de.readline()
@@ -264,5 +265,8 @@ if __name__ == '__main__':
 
     f_phrase.close()
     f_word.close()
+    print('time:', time.time() - start)
+        
+
 
 
