@@ -108,7 +108,9 @@ if __name__ == '__main__':
     for i, line_en in enumerate(f_en):
         if (i + 1) % 5000 == 0:
             print('line no: ', i + 1)
-            break
+            print('time:', time.time() - start)
+
+            # break
         line_de = f_de.readline()
         line_align = f_align.readline()
         phrases_str, phrases, data_aligns, de_align_dict, en_align_dict, phrases_begin, phrases_end =\
@@ -241,31 +243,30 @@ if __name__ == '__main__':
             #                                  N_RL_phrase_discontinuous_r + N_RL_phrase_discontinuous_l
 
     print('getting the probabilities')
-    i = 0
+    # i = 0
     for ph in count_phrase_LR_m.keys():
         p1, p2, p3, p4, p5, p6, p7, p8 = probabs(count_phrase_LR_m, count_phrase_LR_s,count_phrase_LR_dl,
                                                count_phrase_LR_dr, count_phrase_RL_m,count_phrase_RL_s,count_phrase_RL_dl,
                                                count_phrase_RL_dr, total_phrase_LR, total_phrase_RL, ph)
 
-        if len(ph[0]) > 28:
-            for j in [ph, count_phrase_LR_m[ph], count_phrase_LR_s[ph],count_phrase_LR_dl[ph],
-                       count_phrase_LR_dr[ph], count_phrase_RL_m[ph], count_phrase_RL_s[ph], count_phrase_RL_dl[ph],
-                       count_phrase_RL_dr[ph], total_phrase_LR[ph], total_phrase_RL[ph], p1, p2, p3, p4, p5, p6, p7, p8]:
-                print(j)
-            break
-        i += 1
-        # dump_file(f_phrase, p1, p2, p3, p4, p5, p6, p7, p8, ph)
+        # if len(ph[0]) > 28:
+        #     for j in [ph, count_phrase_LR_m[ph], count_phrase_LR_s[ph],count_phrase_LR_dl[ph],
+        #                count_phrase_LR_dr[ph], count_phrase_RL_m[ph], count_phrase_RL_s[ph], count_phrase_RL_dl[ph],
+        #                count_phrase_RL_dr[ph], total_phrase_LR[ph], total_phrase_RL[ph], p1, p2, p3, p4, p5, p6, p7, p8]:
+        #         print(j)
+            # break
+        # i += 1
+        dump_file(f_phrase, p1, p2, p3, p4, p5, p6, p7, p8, ph)
 
         p1, p2, p3, p4, p5, p6, p7, p8 = probabs(count_word_LR_m, count_word_LR_s, count_word_LR_dl,
                                                       count_word_LR_dr, count_word_RL_m, count_word_RL_s,
                                                       count_word_RL_dl,
                                                       count_word_RL_dr, total_word_LR, total_word_RL, ph)
 
-        # dump_file(f_word, p1, p2, p3, p4, p5, p6, p7, p8, ph)
+        dump_file(f_word, p1, p2, p3, p4, p5, p6, p7, p8, ph)
 
     f_phrase.close()
     f_word.close()
-    print('time:', time.time() - start)
 
     #pickle the dictionaries
     pickle.dump(count_phrase_LR_m,open('../pickled/count_phrase_LR_m.pickle','wb'))
@@ -301,9 +302,6 @@ if __name__ == '__main__':
     # pickle.dump(, open('../pickled/.pickle', 'wb'))
     # pickle.dump(, open('../pickled/.pickle', 'wb'))
     # pickle.dump(, open('../pickled/.pickle', 'wb'))
-
-
-
-
+    print('time:', time.time() - start)
 
 
