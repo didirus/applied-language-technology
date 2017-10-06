@@ -108,7 +108,9 @@ if __name__ == '__main__':
     for i, line_en in enumerate(f_en):
         if (i + 1) % 5000 == 0:
             print('line no: ', i + 1)
-            break
+            print('time:', time.time() - start)
+
+            # break
         line_de = f_de.readline()
         line_align = f_align.readline()
         phrases_str, phrases, data_aligns, de_align_dict, en_align_dict, phrases_begin, phrases_end =\
@@ -134,11 +136,11 @@ if __name__ == '__main__':
                 [(p_de, p_en) for p_de, p_en in lr_phrase_discontinuous if pos_de[0] > p_de[-1]])
             N_LR_phrase_discontinuous_r = len(lr_phrase_discontinuous) - N_LR_phrase_discontinuous_l
 
-            # # stats #todo:need to check this again(Q.2)
-            # phrase_discont_dist_LR_l.extend(
-            #     [pos_de[0] - p_de[-1] - 1 for p_de, p_en in lr_phrase_discontinuous if pos_de[0] > p_de[-1]])
-            # phrase_discont_dist_LR_r.extend(
-            #     [p_de[0] - pos_de[-1] - 1 for p_de, p_en in lr_phrase_discontinuous if pos_de[-1] < p_de[0]])
+            # stats #todo:need to check this again(Q.2)
+            phrase_discont_dist_LR_l.extend(
+                [pos_de[0] - p_de[-1] - 1 for p_de, p_en in lr_phrase_discontinuous if pos_de[0] > p_de[-1]])
+            phrase_discont_dist_LR_r.extend(
+                [p_de[0] - pos_de[-1] - 1 for p_de, p_en in lr_phrase_discontinuous if pos_de[-1] < p_de[0]])
 
             de_al = en_align_dict.__getitem__(pos_en[-1] + 1)  # german indices
             monotone = pos_de[-1] + 1 in de_al
@@ -150,11 +152,11 @@ if __name__ == '__main__':
                 N_LR_word_discontinuous_r = int(any([x > pos_de[-1] + 1 for x in de_al]))
                 N_LR_word_discontinuous_l = int(any([x < pos_de[0] - 1 for x in de_al]))
 
-            # # stats #todo:need to check this again(Q.2)
-            # if not monotone and not swap and any([x > pos_de[-1] + 1 for x in de_al]):
-            #     word_discont_dist_LR_r.append(min([x - pos_de[-1] - 1 for x in de_al if x > pos_de[-1] + 1]))
-            # if not monotone and not swap and any([x < pos_de[0] - 1 for x in de_al]):
-            #     word_discont_dist_LR_l.append(min([pos_de[0] - x - 1 for x in de_al if pos_de[0] - 1 > x]))
+            # stats #todo:need to check this again(Q.2)
+            if not monotone and not swap and any([x > pos_de[-1] + 1 for x in de_al]):
+                word_discont_dist_LR_r.append(min([x - pos_de[-1] - 1 for x in de_al if x > pos_de[-1] + 1]))
+            if not monotone and not swap and any([x < pos_de[0] - 1 for x in de_al]):
+                word_discont_dist_LR_l.append(min([pos_de[0] - x - 1 for x in de_al if pos_de[0] - 1 > x]))
 
             previous = [t for t in phrases_end[pos_en[0] - 1] if pos_de[0] not in t[0]]  # r-l
 
@@ -189,11 +191,11 @@ if __name__ == '__main__':
                 N_RL_word_discontinuous_r = int(any([x < pos_de[0] - 1 for x in de_al]))
                 N_RL_word_discontinuous_l = int(any([x > pos_de[-1] + 1 for x in de_al]))
 
-            # # stats #todo:need to check this again(Q.2)
-            # if not monotone and not swap and any([x < pos_de[0] - 1 for x in de_al]):
-            #     word_discont_dist_RL_r.append(min([pos_de[0] - x - 1 for x in de_al if pos_de[0] - 1 > x]))
-            # if not monotone and not swap and any([x > pos_de[-1] + 1 for x in de_al]):
-            #     word_discont_dist_RL_l.append(min([x - pos_de[-1] - 1 for x in de_al if x > pos_de[-1] + 1]))
+            # stats #todo:need to check this again(Q.2)
+            if not monotone and not swap and any([x < pos_de[0] - 1 for x in de_al]):
+                word_discont_dist_RL_r.append(min([pos_de[0] - x - 1 for x in de_al if pos_de[0] - 1 > x]))
+            if not monotone and not swap and any([x > pos_de[-1] + 1 for x in de_al]):
+                word_discont_dist_RL_l.append(min([x - pos_de[-1] - 1 for x in de_al if x > pos_de[-1] + 1]))
 
             phrase_str = alignstowords((pos_de, pos_en), line_de.strip().split(), line_en.strip().split())
             # actual counting
@@ -234,38 +236,37 @@ if __name__ == '__main__':
                                N_RL_word_discontinuous_l
 
             # todo: keep the count of lens for q.2?
-            # german_len = len(pos_de)
-            # phrase_len_reor_m[german_len] += N_LR_phrase_monotone + N_RL_phrase_monotone
-            # phrase_len_reor_s[german_len] += N_LR_phrase_swap + N_RL_phrase_swap
-            # phrase_len_reor_d[german_len] += N_LR_phrase_discontinuous_r + N_LR_phrase_discontinuous_l + \
-            #                                  N_RL_phrase_discontinuous_r + N_RL_phrase_discontinuous_l
+            german_len = len(pos_de)
+            phrase_len_reor_m[german_len] += N_LR_phrase_monotone + N_RL_phrase_monotone
+            phrase_len_reor_s[german_len] += N_LR_phrase_swap + N_RL_phrase_swap
+            phrase_len_reor_d[german_len] += N_LR_phrase_discontinuous_r + N_LR_phrase_discontinuous_l + \
+                                             N_RL_phrase_discontinuous_r + N_RL_phrase_discontinuous_l
 
     print('getting the probabilities')
-    i = 0
+    # i = 0
     for ph in count_phrase_LR_m.keys():
         p1, p2, p3, p4, p5, p6, p7, p8 = probabs(count_phrase_LR_m, count_phrase_LR_s,count_phrase_LR_dl,
                                                count_phrase_LR_dr, count_phrase_RL_m,count_phrase_RL_s,count_phrase_RL_dl,
                                                count_phrase_RL_dr, total_phrase_LR, total_phrase_RL, ph)
 
-        if len(ph[0]) > 28:
-            for j in [ph, count_phrase_LR_m[ph], count_phrase_LR_s[ph],count_phrase_LR_dl[ph],
-                       count_phrase_LR_dr[ph], count_phrase_RL_m[ph], count_phrase_RL_s[ph], count_phrase_RL_dl[ph],
-                       count_phrase_RL_dr[ph], total_phrase_LR[ph], total_phrase_RL[ph], p1, p2, p3, p4, p5, p6, p7, p8]:
-                print(j)
-            break
-        i += 1
-        # dump_file(f_phrase, p1, p2, p3, p4, p5, p6, p7, p8, ph)
+        # if len(ph[0]) > 28:
+        #     for j in [ph, count_phrase_LR_m[ph], count_phrase_LR_s[ph],count_phrase_LR_dl[ph],
+        #                count_phrase_LR_dr[ph], count_phrase_RL_m[ph], count_phrase_RL_s[ph], count_phrase_RL_dl[ph],
+        #                count_phrase_RL_dr[ph], total_phrase_LR[ph], total_phrase_RL[ph], p1, p2, p3, p4, p5, p6, p7, p8]:
+        #         print(j)
+            # break
+        # i += 1
+        dump_file(f_phrase, p1, p2, p3, p4, p5, p6, p7, p8, ph)
 
         p1, p2, p3, p4, p5, p6, p7, p8 = probabs(count_word_LR_m, count_word_LR_s, count_word_LR_dl,
                                                       count_word_LR_dr, count_word_RL_m, count_word_RL_s,
                                                       count_word_RL_dl,
                                                       count_word_RL_dr, total_word_LR, total_word_RL, ph)
 
-        # dump_file(f_word, p1, p2, p3, p4, p5, p6, p7, p8, ph)
+        dump_file(f_word, p1, p2, p3, p4, p5, p6, p7, p8, ph)
 
     f_phrase.close()
     f_word.close()
-    print('time:', time.time() - start)
 
     #pickle the dictionaries
     pickle.dump(count_phrase_LR_m,open('../pickled/count_phrase_LR_m.pickle','wb'))
@@ -288,22 +289,19 @@ if __name__ == '__main__':
     pickle.dump(count_word_RL_dr, open('../pickled/count_word_RL_dr.pickle', 'wb'))
     pickle.dump(total_word_LR, open('../pickled/total_word_LR.pickle', 'wb'))
     pickle.dump(total_word_RL, open('../pickled/total_word_RL.pickle', 'wb'))
+    pickle.dump(phrase_discont_dist_LR_l, open('../pickled/phrase_discont_dist_LR_l.pickle', 'wb'))
+    pickle.dump(phrase_discont_dist_LR_r, open('../pickled/phrase_discont_dist_LR_r.pickle', 'wb'))
+    pickle.dump(phrase_discont_dist_RL_l, open('../pickled/phrase_discont_dist_RL_l.pickle', 'wb'))
+    pickle.dump(phrase_discont_dist_RL_l, open('../pickled/phrase_discont_dist_RL_l.pickle', 'wb'))
+    pickle.dump(phrase_discont_dist_RL_r, open('../pickled/phrase_discont_dist_RL_r.pickle', 'wb'))
+    pickle.dump(word_discont_dist_LR_l, open('../pickled/word_discont_dist_LR_l.pickle', 'wb'))
+    pickle.dump(word_discont_dist_LR_r, open('../pickled/word_discont_dist_LR_r.pickle', 'wb'))
+    pickle.dump(word_discont_dist_RL_l, open('../pickled/word_discont_dist_RL_l.pickle', 'wb'))
+    pickle.dump(word_discont_dist_RL_r, open('../pickled/word_discont_dist_RL_r.pickle', 'wb'))
+    pickle.dump(phrase_len_reor_m, open('../pickled/phrase_len_reor_m.pickle', 'wb'))
+    pickle.dump(phrase_len_reor_s, open('../pickled/phrase_len_reor_s.pickle', 'wb'))
+    pickle.dump(phrase_len_reor_d, open('../pickled/phrase_len_reor_d.pickle', 'wb'))
     # pickle.dump(, open('../pickled/.pickle', 'wb'))
-    # pickle.dump(, open('../pickled/.pickle', 'wb'))
-    # pickle.dump(, open('../pickled/.pickle', 'wb'))
-    # pickle.dump(, open('../pickled/.pickle', 'wb'))
-    # pickle.dump(, open('../pickled/.pickle', 'wb'))
-    # pickle.dump(, open('../pickled/.pickle', 'wb'))
-    # pickle.dump(, open('../pickled/.pickle', 'wb'))
-    # pickle.dump(, open('../pickled/.pickle', 'wb'))
-    # pickle.dump(, open('../pickled/.pickle', 'wb'))
-    # pickle.dump(, open('../pickled/.pickle', 'wb'))
-    # pickle.dump(, open('../pickled/.pickle', 'wb'))
-    # pickle.dump(, open('../pickled/.pickle', 'wb'))
-    # pickle.dump(, open('../pickled/.pickle', 'wb'))
-
-
-
-
+    print('time:', time.time() - start)
 
 
