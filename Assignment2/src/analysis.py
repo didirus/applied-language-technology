@@ -184,7 +184,7 @@ if __name__ == '__main__':
                                 ['rl s', 'count_word_RL_s'],
                                 ['rl dl', 'count_word_RL_dl'],
                                 ['rl dr', 'count_word_RL_dr'],
-                                ['rl m', 'count_phrase_RL_m']]
+                                ['rl m', 'count_word_RL_m']]
 
     create_orientation_barcharts(counts_dict)
 
