@@ -1,4 +1,4 @@
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import pickle
 import numpy as np
 from nltk import compat
@@ -8,26 +8,26 @@ def create_orientation_barcharts(counts_dict):
     # function to create orientation histogram
 
     for approach in counts_dict.keys():
-        barchart = {}
+        values = []
         ticks = []
         for item in counts_dict[approach]:
             orientation = item[0]
             countsname = item[1]
 
-            print(approach, orientation)
             ticks.append(orientation)
             counts = get_counts(countsname)
-            barchart[orientation] = sum(counts.values())
+            values.append(sum(counts.values()))
+            print(approach, orientation,values)
 
 
         plt.figure()
-        plt.bar(np.arange(len(barchart.keys())) , barchart.values(), 1.0, color='g')
+        plt.bar(np.arange(len(values)) , values, 0.8, color='g')
         plt.title(approach)
-        plt.xticks(np.arange(len(barchart.keys())),ticks)
+        plt.xticks(np.arange(len(values)),ticks)
         plt.xlabel('orientation')
         plt.ylabel('count')
         plt.savefig('../fig/hist_'+approach, dpi=100, bbox_inches='tight')
-        break
+
 
 
 def get_counts(name):
