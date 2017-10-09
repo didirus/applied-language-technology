@@ -9,17 +9,26 @@ def create_orientation_barcharts(counts_dict):
 
     for approach in counts_dict.keys():
         barchart = {}
+        ticks = []
+        i=0
         for orientation, countsname in counts_dict[approach].items():
+            i += 1
+            # if i == 3:
+            #     break
             print(approach, orientation)
+            ticks.append(orientation)
             counts = get_counts(countsname)
             barchart[orientation] = sum(counts.values())
 
+
         plt.figure()
-        plt.bar(barchart.keys(), barchart.values(), 1.0, color='g')
-        plt.title(approach + ' ' + orientation)
+        plt.bar(np.arange(len(barchart.keys())) , barchart.values(), 1.0, color='g')
+        plt.title(approach)
+        plt.xticks(np.arange(len(barchart.keys())),ticks)
         plt.xlabel('orientation')
         plt.ylabel('count')
         plt.savefig('../fig/hist_'+approach, dpi=100, bbox_inches='tight')
+        break
 
 
 def get_counts(name):
@@ -159,24 +168,24 @@ if __name__ == '__main__':
     counts_dict = {}
 
     counts_dict['phrase-based'] = {
-                                'left-right swap': 'count_phrase_LR_s',
-                                'left-right discontinuity-left': 'count_phrase_LR_dl',
-                                'left-right discontinuity-right': 'count_phrase_LR_dr',
-                                'left-right monotone': 'count_phrase_LR_m',
-                                'right-left swap': 'count_phrase_RL_s',
-                                'right-left discontinuity-left': 'count_phrase_RL_dl',
-                                'right-left discontinuity-right': 'count_phrase_RL_dr',
-                                'right-left monotone': 'count_phrase_RL_m'}
+                                'lr s': 'count_phrase_LR_s',
+                                'lr dl': 'count_phrase_LR_dl',
+                                'lr dr': 'count_phrase_LR_dr',
+                                'lr m': 'count_phrase_LR_m',
+                                'rl s': 'count_phrase_RL_s',
+                                'rl dl': 'count_phrase_RL_dl',
+                                'rl dr': 'count_phrase_RL_dr',
+                                'rl m': 'count_phrase_RL_m'}
 
     counts_dict['word-based'] = {
-                                'left-right swap': 'count_word_LR_s',
-                                'left-right discontinuity-left': 'count_word_LR_dl',
-                                'left-right discontinuity-right': 'count_word_LR_dr',
-                                'left-right monotone': 'count_word_LR_m',
-                                'right-left swap': 'count_word_RL_s',
-                                'right-left discontinuity-left': 'count_word_RL_dl',
-                                'right-left discontinuity-right': 'count_word_RL_dr',
-                                'right-left monotone': 'count_phrase_RL_m'}
+                                'lr s': 'count_word_LR_s',
+                                'lr dl': 'count_word_LR_dl',
+                                'lr dr': 'count_word_LR_dr',
+                                'lr m': 'count_word_LR_m',
+                                'rl s': 'count_word_RL_s',
+                                'rl dl': 'count_word_RL_dl',
+                                'rl dr': 'count_word_RL_dr',
+                                'rl m': 'count_phrase_RL_m'}
 
     create_orientation_barcharts(counts_dict)
 
