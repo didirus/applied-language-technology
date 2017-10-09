@@ -3,29 +3,23 @@ import pickle
 import numpy as np
 from nltk import compat
 
-def create_orientation_histograms(counts_dict, phrase_length):
+
+def create_orientation_barcharts(counts_dict):
     # function to create orientation histogram
 
-    i = 0
-    for direction in counts_dict.keys():
-        for orientation, countsname in counts_dict[direction].items():
-            print(direction, orientation)
+    for approach in counts_dict.keys():
+        barchart = {}
+        for orientation, countsname in counts_dict[approach].items():
+            print(approach, orientation)
             counts = get_counts(countsname)
-            orientation_count_hash = {}
-            for line in counts:
-                german_ph = line[0].split()
-                english_ph = line[1].split()
-                if len(german_ph) == phrase_length or len(english_ph) == phrase_length:
-                    if counts[line] not in orientation_count_hash:
-                        orientation_count_hash[counts[line]] = 0
-                    orientation_count_hash[counts[line]] += 1
+            barchart[orientation] = sum(counts.values())
 
-            plt.figure(i)
-            plt.bar(orientation_count_hash.keys(), orientation_count_hash.values(), 1.0, color='g')
-            plt.title(direction + ' ' + orientation)
-            # plt.show()
-            plt.savefig('../fig/hist'+str(i),dpi=100,bbox_inches='tight')
-            i += 1
+        plt.figure()
+        plt.bar(barchart.keys(), barchart.values(), 1.0, color='g')
+        plt.title(approach + ' ' + orientation)
+        plt.xlabel('orientation')
+        plt.ylabel('count')
+        plt.savefig('../fig/hist_'+approach, dpi=100, bbox_inches='tight')
 
 
 def get_counts(name):
@@ -160,34 +154,40 @@ def plot_word_discontinuous_distance():
     return True
 
 
-
 if __name__ == '__main__':
-    # counts_dict = {}
-    #
-    # counts_dict['left-right'] = {
-    #     'swap': 'count_phrase_LR_s',
-    #     'discontinuity-left': 'count_phrase_LR_dl',
-    #     'discontinuity-right': 'count_phrase_LR_dr',
-    #     'monotone': 'count_phrase_LR_m'
-    # }
-    #
-    # counts_dict['right-left'] = {
-    #     'swap': 'count_phrase_RL_s',
-    #     'discontinuity-left': 'count_phrase_RL_dl',
-    #     'discontinuity-right': 'count_phrase_RL_dr',
-    #     'monotone': 'count_phrase_RL_m'
-    # }
-    #
-    # create_orientation_histograms(counts_dict, 7)
+
+    counts_dict = {}
+
+    counts_dict['phrase-based'] = {
+                                'left-right swap': 'count_phrase_LR_s',
+                                'left-right discontinuity-left': 'count_phrase_LR_dl',
+                                'left-right discontinuity-right': 'count_phrase_LR_dr',
+                                'left-right monotone': 'count_phrase_LR_m',
+                                'right-left swap': 'count_phrase_RL_s',
+                                'right-left discontinuity-left': 'count_phrase_RL_dl',
+                                'right-left discontinuity-right': 'count_phrase_RL_dr',
+                                'right-left monotone': 'count_phrase_RL_m'}
+
+    counts_dict['word-based'] = {
+                                'left-right swap': 'count_word_LR_s',
+                                'left-right discontinuity-left': 'count_word_LR_dl',
+                                'left-right discontinuity-right': 'count_word_LR_dr',
+                                'left-right monotone': 'count_word_LR_m',
+                                'right-left swap': 'count_word_RL_s',
+                                'right-left discontinuity-left': 'count_word_RL_dl',
+                                'right-left discontinuity-right': 'count_word_RL_dr',
+                                'right-left monotone': 'count_phrase_RL_m'}
+
+    create_orientation_barcharts(counts_dict)
 
     # phrase discontinuous distance
-    plot_phrase_discontinuous_distance()
-
-    # word discontinuous distance
-    plot_word_discontinuous_distance()
-
-    # reordering events frequency wrt German-side phrase len
-    plot_phrase_len_reorder()
-
-    # frequency of discontinuous-to-the-left and -to-the-right wrt distance
-    plot_phrase_len_discont()
+    # plot_phrase_discontinuous_distance()
+    #
+    # # word discontinuous distance
+    # plot_word_discontinuous_distance()
+    #
+    # # reordering events frequency wrt German-side phrase len
+    # plot_phrase_len_reorder()
+    #
+    # # frequency of discontinuous-to-the-left and -to-the-right wrt distance
+    # plot_phrase_len_discont()
