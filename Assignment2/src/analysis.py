@@ -189,13 +189,13 @@ if __name__ == '__main__':
     create_orientation_barcharts(counts_dict)
 
     # phrase discontinuous distance
-    # plot_phrase_discontinuous_distance()
-    #
-    # # word discontinuous distance
-    # plot_word_discontinuous_distance()
-    #
-    # # reordering events frequency wrt German-side phrase len
-    # plot_phrase_len_reorder()
-    #
-    # # frequency of discontinuous-to-the-left and -to-the-right wrt distance
-    # plot_phrase_len_discont()
+    plot_phrase_discontinuous_distance()
+
+    # word discontinuous distance
+    plot_word_discontinuous_distance()
+
+    # reordering events frequency wrt German-side phrase len
+    plot_phrase_len_reorder()
+
+    # frequency of discontinuous-to-the-left and -to-the-right wrt distance
+    plot_phrase_len_discont()
