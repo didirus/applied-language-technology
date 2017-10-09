@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import pickle
 import numpy as np
 from nltk import compat
@@ -10,11 +10,10 @@ def create_orientation_barcharts(counts_dict):
     for approach in counts_dict.keys():
         barchart = {}
         ticks = []
-        i=0
-        for orientation, countsname in counts_dict[approach].items():
-            i += 1
-            # if i == 3:
-            #     break
+        for item in counts_dict[approach]:
+            orientation = item[0]
+            countsname = item[1]
+
             print(approach, orientation)
             ticks.append(orientation)
             counts = get_counts(countsname)
@@ -167,25 +166,25 @@ if __name__ == '__main__':
 
     counts_dict = {}
 
-    counts_dict['phrase-based'] = {
-                                'lr s': 'count_phrase_LR_s',
-                                'lr dl': 'count_phrase_LR_dl',
-                                'lr dr': 'count_phrase_LR_dr',
-                                'lr m': 'count_phrase_LR_m',
-                                'rl s': 'count_phrase_RL_s',
-                                'rl dl': 'count_phrase_RL_dl',
-                                'rl dr': 'count_phrase_RL_dr',
-                                'rl m': 'count_phrase_RL_m'}
+    counts_dict['phrase-based'] = [
+                                ['lr s','count_phrase_LR_s'],
+                                ['lr dl', 'count_phrase_LR_dl'],
+                                ['lr dr', 'count_phrase_LR_dr'],
+                                ['lr m', 'count_phrase_LR_m'],
+                                ['rl s', 'count_phrase_RL_s'],
+                                ['rl dl', 'count_phrase_RL_dl'],
+                                ['rl dr', 'count_phrase_RL_dr'],
+                                ['rl m', 'count_phrase_RL_m']]
 
-    counts_dict['word-based'] = {
-                                'lr s': 'count_word_LR_s',
-                                'lr dl': 'count_word_LR_dl',
-                                'lr dr': 'count_word_LR_dr',
-                                'lr m': 'count_word_LR_m',
-                                'rl s': 'count_word_RL_s',
-                                'rl dl': 'count_word_RL_dl',
-                                'rl dr': 'count_word_RL_dr',
-                                'rl m': 'count_phrase_RL_m'}
+    counts_dict['word-based'] = [
+                                ['lr s', 'count_word_LR_s'],
+                                ['lr dl', 'count_word_LR_dl'],
+                                ['lr dr', 'count_word_LR_dr'],
+                                ['lr m', 'count_word_LR_m'],
+                                ['rl s', 'count_word_RL_s'],
+                                ['rl dl', 'count_word_RL_dl'],
+                                ['rl dr', 'count_word_RL_dr'],
+                                ['rl m', 'count_phrase_RL_m']]
 
     create_orientation_barcharts(counts_dict)
 
