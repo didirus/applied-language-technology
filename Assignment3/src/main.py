@@ -36,6 +36,11 @@ def read_pt(pt_file=None):
 
 
 def read_lm(lm_file=None):
+    """
+    Function to read Language modelprobs
+    :param lm_file: file object for lang. Model
+    :return: Dictionary with key: 'ngram text' and value (ngram prob, backoff)
+    """
     gram = 0
     lm = {}
     min_p = 0.0
