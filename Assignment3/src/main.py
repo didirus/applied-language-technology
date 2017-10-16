@@ -24,7 +24,7 @@ def read_pt(pt_file=None):
     phrases = {}
     i = 0
     for line in pt_file:
-        if i%10000 == 0:
+        if i%50000 == 0:
             print('line no.(PT) ', i)
         i += 1
 
@@ -48,7 +48,7 @@ def read_lm(lm_file=None):
 
     i=0
     for line in lm_file:
-        if i%10000 == 0:
+        if i%50000 == 0:
             print ('line no.(lm): ',i)
         i+=1
 
@@ -87,7 +87,7 @@ def read_ro(ro_file=None):
     i = 0
     reordering = {}
     for line in ro_file:
-        if i % 10000 == 0:
+        if i % 50000 == 0:
             print ('line no.(ro)',i)
         i += 1
         line = line.split(' ||| ')
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     lm,minlm_p = read_lm(lm_file=language_model)
 
 
-    reordering_file = open(data_path+'dm.fe.0.75', 'r')
+    reordering_file = open(data_path+'dm_fe_0.75', 'r')
     reordering = read_ro(ro_file=reordering_file)
 
     # test_results = open(data_path+'testresults.trans.txt.trace', 'r')
