@@ -26,6 +26,7 @@ def create_orientation_barcharts(counts_dict):
         plt.xticks(np.arange(len(values)),ticks)
         plt.xlabel('orientation')
         plt.ylabel('count')
+        plt.ylim((0, 12000000))
         plt.savefig('../fig/hist_'+approach, dpi=100, bbox_inches='tight')
 
 
