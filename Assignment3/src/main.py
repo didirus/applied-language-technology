@@ -1,5 +1,6 @@
 from collections import defaultdict
 import pickle
+import time
 
 def checkif_float(N):
     '''
@@ -23,8 +24,8 @@ def read_pt(pt_file=None):
     phrases = {}
     i = 0
     for line in pt_file:
-        if i == 100:
-            print('line no. ', i)
+        if i%10000 == 0:
+            print('line no.(PT) ', i)
         i += 1
 
         line = line.split(' ||| ')
@@ -47,8 +48,8 @@ def read_lm(lm_file=None):
 
     i=0
     for line in lm_file:
-        if i==100:
-            print (i)
+        if i%10000 == 0:
+            print ('line no.(lm): ',i)
         i+=1
 
         if line[0] =='\\':
@@ -74,22 +75,51 @@ def read_lm(lm_file=None):
             ph = ' '.join(words)
             lm[ph] = (prob, backoff_prob)
 
-    print "min prob: " + str(min_p)
+    # print ("min prob: " ,str(min_p))
     return lm, min_p
 
+def read_ro(ro_file=None):
+    """
+    Function(same as read_pt()) to read phrase table
+    :param ro_file: file object for reorderings
+    :return: Dictionary of phrases. key: (f,e) and value:list of probability
+    """
+    i = 0
+    reordering = {}
+    for line in ro_file:
+        if i % 10000 == 0:
+            print ('line no.(ro)',i)
+        i += 1
+        line = line.split(' ||| ')
+        f = line[0]
+        e = line[1]
+        probs = [float(p) for p in line[2].split()]
+        # todo: no use of alignments?
+        reordering[(f, e)] = probs
+
+    return reordering
+
 if __name__ == '__main__':
+
+    start = time.time()
+
     data_path = '../data/ALT/'
+    # need data file?
     # f_en = open(data_path +'file.test.en', 'r')
     # f_de = open(data_path+'file.test.de', 'r')
 
-    '''
+
     # Read  phrases and probabs from phrase table
     phrase_table = open(data_path + 'phrase-table', 'r')
     phrases = read_pt(pt_file=phrase_table)
-    '''
+    
+    # Read Language model and probabilities
+    language_model = open(data_path+'file.en.lm', 'r')
+    lm,minlm_p = read_lm(lm_file=language_model)
+
+
+    reordering_file = open(data_path+'dm.fe.0.75', 'r')
+    reordering = read_ro(ro_file=reordering_file)
 
     # test_results = open(data_path+'testresults.trans.txt.trace', 'r')
-    language_model = open(data_path+'file.en.lm', 'r')
-    read_lm(lm_file=language_model)
-
-    # reordering = open(data_path+'dm.fe.0.75', 'r')
+    print('time:', time.time() - start)
