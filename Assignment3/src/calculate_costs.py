@@ -106,37 +106,41 @@ def overall_trans_cost(p_table,lm,min_lm_prob, reorder_file):
     data_path = '../data/ALT/'
 
     print ('overall cost function')
-    with open(data_path+'testresults.trans.txt.trace', 'r') as traces:
-        with open(data_path+'file.test.de', 'r') as f_file:
-            # dump the cost in the file
-            with open(data_path+'cost_output.txt', 'w') as output_file:
-                sentence_cost_list = []
-                for f_line, trace in zip(f_file, traces):
-                    trace = trace.split(' ||| ')
-                    f_line = f_line.split()
-                    phrases = [tuple(p.split(':', 1)) for p in trace]
-                    cost_per_phrase = []
-                    for i in range(0, len(phrases)):
 
-                        if i==100:
-                            print('100')
+    traces = open(data_path+'testresults.trans.txt.trace', 'r')
+    f_file = open(data_path+'file.test.de', 'r')
+    output_file = open(data_path+'cost_output.txt', 'w')
 
-                        phrase = phrases[i]
-                        phrase_translation_model_cost = transl_model_cost(phrase, p_table, f_line)
-                        phrase_reordering_model_cost = reor_model_cost(phrase, trace, reorder_file, f_line)
+    sentence_cost_list = []
+    for f_line, trace in zip(f_file, traces):
+        trace = trace.split(' ||| ')
+        f_line = f_line.split()
+        phrases = [tuple(p.split(':', 1)) for p in trace]
+        cost_per_phrase = []
+        for i in range(0, len(phrases)):
 
-                        # language model-> start and end symbols need to be added to the phrase
+            if i==100:
+                print('100')
 
-                        phrase_lm = phrase[1]
-                        if i == 0:
-                            phrase_lm = "<s> " + phrase[1]
-                        if i == len(phrases):
-                            phrase_lm = phrase[1] + " </s>"
-                        phrase_language_model_cost = lm_cost(phrase_lm, lm, min_lm_prob)
-                        phrase_penalty = -1
-                        phrase_cost = 1 * phrase_reordering_model_cost + 1 * phrase_translation_model_cost + 1 * phrase_language_model_cost + 1 * phrase_penalty
-                        cost_per_phrase.append(phrase_cost)
+            phrase = phrases[i]
+            phrase_translation_model_cost = transl_model_cost(phrase, p_table, f_line)
+            phrase_reordering_model_cost = reor_model_cost(phrase, trace, reorder_file, f_line)
 
+            # language model-> start and end symbols need to be added to the phrase
+
+            phrase_lm = phrase[1]
+            if i == 0:
+                phrase_lm = "<s> " + phrase[1]
+            if i == len(phrases):
+                phrase_lm = phrase[1] + " </s>"
+            phrase_language_model_cost = lm_cost(phrase_lm, lm, min_lm_prob)
+            phrase_penalty = -1
+            phrase_cost = 1 * phrase_reordering_model_cost + 1 * phrase_translation_model_cost + 1 * phrase_language_model_cost + 1 * phrase_penalty
+            cost_per_phrase.append(phrase_cost)
+
+    traces.close()
+    f_file.close()
+    output_file.close()
 
     return
 
