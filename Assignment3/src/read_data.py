@@ -1,5 +1,4 @@
-import pickle
-
+import pickle,os
 
 def checkif_float(N):
     '''
@@ -21,7 +20,7 @@ def read_pt(pt_file=None):
     :return: Dictionary of phrases. key: (f,e) and value:list of probability
     """
     if os.path.exists("../data/ALT/phrases"):
-        print('read from pickle')
+        print('read from pickle phrase table')
         phrases = pickle.load(open('../data/ALT/phrases', 'rb'))
     else:
         phrases = {}
@@ -47,6 +46,7 @@ def read_lm(lm_file=None):
     :return: Dictionary with key: 'ngram text' and value (ngram prob, backoff)
     """
     if os.path.exists("../data/ALT/lm_min_p"):
+        print('read from pickle lm,lm_p_min')
         lm, min_p = pickle.load(open('../data/ALT/lm_min_p', 'rb'))
     else:
         gram = 0
@@ -93,7 +93,8 @@ def read_ro(ro_file=None):
     :return: Dictionary of phrases. key: (f,e) and value:list of probability
     """
     if os.path.exists('../data/ALT/reordering'):
-        reorderings = pickle.load(open('../data/ALT/reordering', 'rb'))
+        print('read from pickle reordering')
+        reordering = pickle.load(open('../data/ALT/reordering', 'rb'))
     else:
         i = 0
         reordering = {}
