@@ -1,6 +1,8 @@
 from collections import defaultdict
 import pickle
 import time, math
+import os
+import pickle
 
 def checkif_float(N):
     '''
@@ -21,18 +23,22 @@ def read_pt(pt_file=None):
     :param pt_file: file object for phrase table
     :return: Dictionary of phrases. key: (f,e) and value:list of probability
     """
-    phrases = {}
-    i = 0
-    for line in pt_file:
-        if i%50000 == 0:
-            print('line no.(PT) ', i)
-        i += 1
+    if os.path.exists("./data/ALT/phrases/"):
+        phrases = pickle.load(open('./data/ALT/phrases', 'rb'))
+    else:
+        phrases = {}
+        i = 0
+        for line in pt_file:
+            if i%500000 == 0:
+                print('line no.(PT) ', i)
+            i += 1
 
-        line = line.split(' ||| ')
-        f = line[0]
-        e = line[1]
-        probab = [float(p) for p in line[2].split()]
-        phrases[(f, e)] = probab
+            line = line.split(' ||| ')
+            f = line[0]
+            e = line[1]
+            probab = [float(p) for p in line[2].split()]
+            phrases[(f, e)] = probab
+        pickle.dump(phrases, open('./data/ALT/phrases','wb'))
     return phrases
 
 
@@ -245,23 +251,20 @@ if __name__ == '__main__':
     # f_en = open(data_path +'file.test.en', 'r')
     # f_de = open(data_path+'file.test.de', 'r')
 
-
-    # Read  phrases and probabs from phrase table
+    print('Read  phrases and probabs from phrase table')
     phrase_table = open(data_path + 'phrase-table', 'r')
     phrases = read_pt(pt_file=phrase_table)
     
-    # Read Language model and probabilities
+    print('Read Language model and probabilities')
     language_model = open(data_path+'file.en.lm', 'r')
     lm,minlm_p = read_lm(lm_file=language_model)
 
-
+    print('Read reorderings')
     reordering_file = open(data_path+'dm_fe_0.75', 'r')
     reordering = read_ro(ro_file=reordering_file)
 
     # test_results_trace = open(data_path+'testresults.trans.txt.trace', 'r')
 
     overall_trans_cost(phrases,lm,minlm_p,reordering)
-
-
 
     print('time:', time.time() - start)
