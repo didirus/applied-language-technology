@@ -4,6 +4,7 @@ import time, math
 import os
 import pickle
 
+
 def checkif_float(N):
     '''
     check if the value if float
@@ -94,27 +95,34 @@ def read_ro(ro_file=None):
     :param ro_file: file object for reorderings
     :return: Dictionary of phrases. key: (f,e) and value:list of probability
     """
-    i = 0
-    reordering = {}
-    for line in ro_file:
-        if i % 50000 == 0:
-            print ('line no.(ro)',i)
-        i += 1
-        line = line.split(' ||| ')
-        f = line[0]
-        e = line[1]
-        probs = [float(p) for p in line[2].split()]
-        # todo: no use of alignments?
-        reordering[(f, e)] = probs
-
+    if os.path.exists('../data/ALT/reordering'):
+        reorderings = pickle.load(open('../data/ALT/reordering', 'rb'))
+    else:
+        i = 0
+        reordering = {}
+        for line in ro_file:
+            if i % 50000 == 0:
+                print ('line no.(ro)',i)
+            i += 1
+            line = line.split(' ||| ')
+            f = line[0]
+            e = line[1]
+            probs = [float(p) for p in line[2].split()]
+            # todo: no use of alignments?
+            reordering[(f, e)] = probs
+        pickle.dump(reordering, open('../data/ALT/reordering', 'wb'))
     return reordering
+
+
 # todo: calculate cost from language model recursive?
 def lm_cost(phrase_lm, lm, min_lm_prob):
     return 0
 
+
 def word_cost():
     # for back-off
     return
+
 
 def reor_model_cost(phrase, trace, reorder_file, f_line):
 
