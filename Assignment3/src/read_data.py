@@ -19,15 +19,16 @@ def read_pt(pt_file=None):
     :param pt_file: file object for phrase table
     :return: Dictionary of phrases. key: (f,e) and value:list of probability
     """
-    if os.path.exists("../data/ALT/phrases"):
+    if os.path.exists("../data/ALT/phrases_small"):
         print('read from pickle phrase table')
-        phrases = pickle.load(open('../data/ALT/phrases', 'rb'))
+        phrases = pickle.load(open('../data/ALT/phrases_small', 'rb'))
     else:
         phrases = {}
         i = 0
         for line in pt_file:
-            if i%500000 == 0:
+            if (i+1)%50000 == 0:
                 print('line no.(PT) ', i)
+                break
             i += 1
 
             line = line.split(' ||| ')
@@ -35,7 +36,7 @@ def read_pt(pt_file=None):
             e = line[1]
             probab = [float(p) for p in line[2].split()]
             phrases[(f, e)] = probab
-        pickle.dump(phrases, open('../data/ALT/phrases','wb'))
+        pickle.dump(phrases, open('../data/ALT/phrases_small','wb'))
     return phrases
 
 
@@ -55,7 +56,7 @@ def read_lm(lm_file=None):
 
         i=0
         for line in lm_file:
-            if i%50000 == 0:
+            if (i+1)%50000 == 0:
                 print ('line no.(lm): ',i)
             i+=1
 
@@ -92,15 +93,16 @@ def read_ro(ro_file=None):
     :param ro_file: file object for reorderings
     :return: Dictionary of phrases. key: (f,e) and value:list of probability
     """
-    if os.path.exists('../data/ALT/reordering'):
-        print('read from pickle reordering')
-        reordering = pickle.load(open('../data/ALT/reordering', 'rb'))
+    if os.path.exists('../data/ALT/reordering_small'):
+        print('read from pickle reordering_small')
+        reordering = pickle.load(open('../data/ALT/reordering_small', 'rb'))
     else:
         i = 0
         reordering = {}
         for line in ro_file:
-            if i % 50000 == 0:
+            if (i+1) % 50000 == 0:
                 print ('line no.(ro)',i)
+                break
             i += 1
             line = line.split(' ||| ')
             f = line[0]
@@ -108,5 +110,5 @@ def read_ro(ro_file=None):
             probs = [float(p) for p in line[2].split()]
             # todo: no use of alignments?
             reordering[(f, e)] = probs
-        pickle.dump(reordering, open('../data/ALT/reordering', 'wb'))
+        pickle.dump(reordering, open('../data/ALT/reordering_small', 'wb'))
     return reordering

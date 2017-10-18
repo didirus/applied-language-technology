@@ -115,10 +115,11 @@ def overall_trans_cost(p_table,lm,min_lm_prob, reorder_file):
                     trace = trace.split(' ||| ')
                     f_line = f_line.split()
                     phrases = [tuple(p.split(':', 1)) for p in trace]
+
                     cost_per_phrase = []
                     for i in range(0, len(phrases)):
-
-                        if i==100:
+                        print ('calc cost' ,i)
+                        if i==1:
                             print('100')
 
                         phrase = phrases[i]
