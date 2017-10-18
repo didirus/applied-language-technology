@@ -48,41 +48,45 @@ def read_lm(lm_file=None):
     :param lm_file: file object for lang. Model
     :return: Dictionary with key: 'ngram text' and value (ngram prob, backoff)
     """
-    gram = 0
-    lm = {}
-    min_p = 0.0
+    if os.path.exists("../data/ALT/lm_min_p"):
+        lm, min_p = pickle.load(open('../data/ALT/lm_min_p', 'rb'))
+    else:
+        gram = 0
+        lm = {}
+        min_p = 0.0
 
-    i=0
-    for line in lm_file:
-        if i%50000 == 0:
-            print ('line no.(lm): ',i)
-        i+=1
+        i=0
+        for line in lm_file:
+            if i%50000 == 0:
+                print ('line no.(lm): ',i)
+            i+=1
 
-        if line[0] =='\\':
-            if line[-7:-1]=='grams:':
-                print (line)
-                gram = line[1]
-                # print (gram)
-            continue
-        line = line.split()
+            if line[0] =='\\':
+                if line[-7:-1]=='grams:':
+                    print (line)
+                    gram = line[1]
+                    # print (gram)
+                continue
+            line = line.split()
 
-        if gram!=0 and len(line)>0:
-            prob = float(line[0])
-            if prob < min_p:
-                min_p = prob
+            if gram!=0 and len(line)>0:
+                prob = float(line[0])
+                if prob < min_p:
+                    min_p = prob
 
-            if checkif_float(line[-1]):
-                backoff_prob = float(line[-1])
-                words = line[1:-1]
-            else:
-                backoff_prob = 0
-                words = line[1:]
+                if checkif_float(line[-1]):
+                    backoff_prob = float(line[-1])
+                    words = line[1:-1]
+                else:
+                    backoff_prob = 0
+                    words = line[1:]
 
-            ph = ' '.join(words)
-            lm[ph] = (prob, backoff_prob)
+                ph = ' '.join(words)
+                lm[ph] = (prob, backoff_prob)
+        pickle.dump([lm, min_p], open('../data/ALT/lm_min_p', 'wb'))
 
-    # print ("min prob: " ,str(min_p))
     return lm, min_p
+
 
 def read_ro(ro_file=None):
     """
