@@ -75,7 +75,7 @@ def reor_model_cost(phrase, trace, reorder_file, f_line):
     return reor_cost
 
 
-def transl_model_cost(phrase,p_table,f_line):
+def transl_model_cost(phrase, p_table, f_line):
     print ('translation model cost')
     # phrases in the trace assign 4 translation model weights
     e = phrase[1].rstrip()
@@ -101,7 +101,7 @@ def transl_model_cost(phrase,p_table,f_line):
     return phrase_cost
 
 
-def overall_trans_cost(p_table,lm,min_lm_prob, reorder_file):
+def overall_trans_cost(p_table=None, lm=None, min_lm_prob=None, reorder_file=None):
 
     data_path = '../data/ALT/'
 
@@ -112,6 +112,7 @@ def overall_trans_cost(p_table,lm,min_lm_prob, reorder_file):
     output_file = open(data_path+'cost_output.txt', 'w')
 
     sentence_cost_list = []
+
     for f_line, trace in zip(f_file, traces):
         trace = trace.split(' ||| ')
         f_line = f_line.split()
