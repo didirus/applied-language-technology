@@ -108,6 +108,7 @@ def word_cost():
 
 def reor_model_cost(phrase, trace, reorder_file, f_line):
 
+    print ('reordering model cost')
     # index of the phrase in the trace sentence
     phrase_index = ''.join([str(phrase[0]), ':', str(phrase[1])])
 
@@ -170,6 +171,7 @@ def reor_model_cost(phrase, trace, reorder_file, f_line):
 
 
 def transl_model_cost(phrase,p_table,f_line):
+    print ('translation model cost')
     # phrases in the trace assign 4 translation model weights
     e = phrase[1].rstrip()
 
@@ -210,6 +212,10 @@ def overall_trans_cost(p_table,lm,min_lm_prob, reorder_file):
                     phrases = [tuple(p.split(':', 1)) for p in trace]
                     cost_per_phrase = []
                     for i in range(0, len(phrases)):
+
+                        if i==100:
+                            print('100')
+
                         phrase = phrases[i]
                         phrase_translation_model_cost = transl_model_cost(phrase, p_table, f_line)
                         phrase_reordering_model_cost = reor_model_cost(phrase, trace, reorder_file, f_line)
