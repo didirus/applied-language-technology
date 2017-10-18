@@ -100,7 +100,7 @@ def read_ro(ro_file=None):
     return reordering
 # todo: calculate cost from language model recursive?
 def lm_cost(phrase_lm, lm, min_lm_prob):
-    return
+    return 0
 
 def word_cost():
     # for back-off
@@ -196,11 +196,13 @@ def transl_model_cost(phrase,p_table,f_line):
 
 def overall_trans_cost(p_table,lm,min_lm_prob, reorder_file):
 
+    data_path = '../data/ALT/'
+
     print ('overall cost function')
-    with open('testresults.trans.txt.trace', 'r') as traces:
-        with open('file.test.de', 'r') as f_file:
+    with open(data_path+'testresults.trans.txt.trace', 'r') as traces:
+        with open(data_path+'file.test.de', 'r') as f_file:
             # dump the cost in the file
-            with open('cost_output.txt', 'w') as output_file:
+            with open(data_path+'cost_output.txt', 'w') as output_file:
                 sentence_cost_list = []
                 for f_line, trace in zip(f_file, traces):
                     trace = trace.split(' ||| ')
@@ -223,6 +225,7 @@ def overall_trans_cost(p_table,lm,min_lm_prob, reorder_file):
                         phrase_penalty = -1
                         phrase_cost = 1 * phrase_reordering_model_cost + 1 * phrase_translation_model_cost + 1 * phrase_language_model_cost + 1 * phrase_penalty
                         cost_per_phrase.append(phrase_cost)
+
 
     return
 
