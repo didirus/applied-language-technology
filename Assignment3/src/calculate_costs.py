@@ -137,6 +137,10 @@ def overall_trans_cost(p_table,lm,min_lm_prob, reorder_file):
             phrase_penalty = -1
             phrase_cost = 1 * phrase_reordering_model_cost + 1 * phrase_translation_model_cost + 1 * phrase_language_model_cost + 1 * phrase_penalty
             cost_per_phrase.append(phrase_cost)
+            # dump in file
+            output_file.write(trace[i].rstrip() + " lm:" + str(phrase_language_model_cost) + " tm:" + str(phrase_translation_model_cost) + " rm:" + str(phrase_reordering_model_cost) + " total_phrase:" + str(phrase_cost) + " ||| ")
+        sentence_cost = sum(cost_per_phrase)
+        output_file.write("Line cost: "+ str(sentence_cost) + '\n')
 
     traces.close()
     f_file.close()

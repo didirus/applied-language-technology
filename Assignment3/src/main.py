@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     print('Read Language model and probabilities')
     language_model = open(data_path+'file.en.lm', 'r')
-    # lm,minlm_p = read_lm(lm_file=language_model)
+    lm,minlm_p = read_lm(lm_file=language_model)
 
     print('Read reorderings')
     reordering_file = open(data_path+'dm_fe_0.75', 'r')
