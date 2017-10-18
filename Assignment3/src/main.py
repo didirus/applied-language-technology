@@ -98,8 +98,8 @@ def read_ro(ro_file=None):
         reordering[(f, e)] = probs
 
     return reordering
-
-def lm_cost():
+# todo: calculate cost from language model recursive?
+def lm_cost(phrase_lm, lm, min_lm_prob):
     return
 
 def word_cost():
@@ -120,7 +120,7 @@ def reor_model_cost(phrase, trace, reorder_file, f_line):
     next_ph_align_begin, next_ph_align_end = next_ph_align.split('-')
     prev_ph_align_start, prev_ph_align_end = prev_ph_align.split('-')
 
-    model_output = 0
+    reor_cost = 0
     e = phrase[1].rstrip()
     f_align_start = int(phrase[0].split('-')[0])
     f_align_end = int(phrase[0].split('-')[1])
@@ -165,8 +165,8 @@ def reor_model_cost(phrase, trace, reorder_file, f_line):
     except KeyError:
         # untranslated phrase
         phrase_cost = -1
-    model_output += phrase_cost
-    return model_output
+    reor_cost += phrase_cost
+    return reor_cost
 
 
 def transl_model_cost(phrase,p_table,f_line):
@@ -214,6 +214,16 @@ def overall_trans_cost(p_table,lm,min_lm_prob, reorder_file):
 
                         # language model-> start and end symbols need to be added to the phrase
 
+                        phrase_lm = phrase[1]
+                        if i == 0:
+                            phrase_lm = "<s> " + phrase[1]
+                        if i == len(phrases):
+                            phrase_lm = phrase[1] + " </s>"
+                        phrase_language_model_cost = lm_cost(phrase_lm, lm, min_lm_prob)
+                        phrase_penalty = -1
+                        phrase_cost = 1 * phrase_reordering_model_cost + 1 * phrase_translation_model_cost + 1 * phrase_language_model_cost + 1 * phrase_penalty
+                        cost_per_phrase.append(phrase_cost)
+
     return
 
 
@@ -241,7 +251,7 @@ if __name__ == '__main__':
 
     # test_results_trace = open(data_path+'testresults.trans.txt.trace', 'r')
 
-    overall_trans_cost(phrase_table,lm,minlm_p,reordering)
+    overall_trans_cost(phrases,lm,minlm_p,reordering)
 
 
 
