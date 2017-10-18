@@ -23,6 +23,6 @@ if __name__ == '__main__':
 
     # test_results_trace = open(data_path+'testresults.trans.txt.trace', 'r')
 
-    # overall_trans_cost(phrases,lm,minlm_p,reordering)
+    overall_trans_cost(phrases,lm,minlm_p,reordering)
 
     print('time:', time.time() - start)
