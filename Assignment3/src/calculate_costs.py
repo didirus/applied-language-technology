@@ -95,7 +95,7 @@ def transl_model_cost(phrase,p_table,f_line):
         phrase_cost = phrase_cost * 1  # -1
     except KeyError:
         if f != e:
-            print 'key not found: ', (f, e)
+            print ('key not found: ', (f, e))
 
         phrase_cost = -1
     return phrase_cost
