@@ -3,12 +3,49 @@ import math
 
 # todo: calculate cost from language model recursive?
 def lm_cost(phrase_lm, lm, min_lm_prob):
-    return 0
+    lmcost = 0
+    e = phrase_lm
+    words = e.split()
+    # For all words w_n in phrase
+    for cur_pos in range(0, len(words)):
+        # History: w1,...w_{n-1}
+        history_pos = range(0, cur_pos)
+        history = [words[pos] for pos in history_pos]
+
+        w_n = words[cur_pos]
+
+        # Do not take into account unigram of first word,
+        #  if first word is <s>
+        if cur_pos == 0 and w_n == "<s>":
+            continue
+
+        # Language model of a phrase is sum of p(w_n| w1,...,w_{n-1}) for every w_n
+        cost_word = word_cost(w_n, history, lm, min_lm_prob)
+        lmcost += cost_word
+    lmcost *= 1
+    return lmcost
 
 
-def word_cost():
-    # for back-off
-    return
+def word_cost(w_n,history, lm, minimum_cost, backoff=False):
+
+    wn_cost = 0
+    n_gram = ' '.join(history + [w_n])
+    if n_gram in lm:
+        wn_cost = lm[n_gram][0]
+        if backoff:
+            wn_cost += lm[n_gram][1]
+    else:
+        # n-gram not available
+        if len(history) > 0:
+            #backoff to shorter history w_2...w_{n-1}
+            new_history = history[1:]
+            # Recursive call of word_cost,
+            # and add backoff probability
+            wn_cost = word_cost(w_n,new_history, lm, minimum_cost, backoff=True)
+        else:
+            # Assign wn_cost=0 if unigram is not available
+            wn_cost = minimum_cost
+    return wn_cost
 
 
 def reor_model_cost(phrase, trace, reorder_file, f_line):
