@@ -1,5 +1,5 @@
 import math
-
+import numpy as np
 
 # todo: calculate cost from language model recursive?
 def lm_cost(phrase_lm, lm, min_lm_prob):
@@ -138,7 +138,14 @@ def transl_model_cost(phrase, p_table, f_line):
     return phrase_cost
 
 
-def overall_trans_cost(p_table=None, lm=None, min_lm_prob=None, reorder_file=None):
+def lin_dist_cost(phrase, next_phrase):
+    this_end = int(phrase[0].split('-')[1])
+    next_start = int(next_phrase[0].split('-')[0])
+    cost = -1 * abs(next_start - this_end - 1)
+    return cost
+
+
+def overall_trans_cost(l_r, l_t, l_l, l_d, l_p, p_table=None, lm=None, min_lm_prob=None, reorder_file=None):
 
     data_path = '../data/ALT/'
 
@@ -161,8 +168,10 @@ def overall_trans_cost(p_table=None, lm=None, min_lm_prob=None, reorder_file=Non
 
             # translation cost
             phrase_translation_model_cost = transl_model_cost(phrase, p_table, f_line)
-            # distortion cost
+
+            # orientation distortion cost
             phrase_reordering_model_cost = reor_model_cost(phrase, trace, reorder_file, f_line)
+
             # language model cost
             # language model-> start and end symbols need to be added to the phrase
             phrase_lm = phrase[1]
@@ -172,19 +181,29 @@ def overall_trans_cost(p_table=None, lm=None, min_lm_prob=None, reorder_file=Non
                 phrase_lm = phrase[1] + " </s>"
             phrase_language_model_cost = lm_cost(phrase_lm, lm, min_lm_prob)
 
-            # distortion cost
+            # linear distortion cost
+            phrase_linear_distortion_cost = lin_dist_cost(phrase, phrases[i+1])
 
             # phrase penalty
             phrase_penalty = -1
 
             # combine all costs into one "phrase cost"
-            phrase_cost = 1 * phrase_reordering_model_cost + 1 * phrase_translation_model_cost + 1 * phrase_language_model_cost + 1 * phrase_penalty
+            phrase_cost = np.sum(l_r * phrase_reordering_model_cost,
+                                 l_t * phrase_translation_model_cost,
+                                 l_l * phrase_language_model_cost,
+                                 l_d * phrase_linear_distortion_cost,
+                                 l_p * phrase_penalty)
+
             cost_per_phrase.append(phrase_cost)
+
             # dump in file
             output_file.write(trace[i].rstrip() + " lm:" + str(phrase_language_model_cost) + " tm:" + str(phrase_translation_model_cost) + " rm:" + str(phrase_reordering_model_cost) + " total_phrase:" + str(phrase_cost) + " ||| ")
+
+        # sum all the phrase costs for entire sentence
         sentence_cost = sum(cost_per_phrase)
         output_file.write("Line cost: "+ str(sentence_cost) + '\n')
 
+    # close files
     traces.close()
     f_file.close()
     output_file.close()

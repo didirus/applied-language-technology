@@ -9,6 +9,9 @@ if __name__ == '__main__':
 
     data_path = '../data/ALT/'
 
+    # lambda values
+    l_r, l_t, l_l, l_d, l_p = 1, 1, 1, 1, 1
+
     print('Read  phrases and probabs from phrase table')
     phrase_table = open(data_path + 'phrase-table', 'r')
     phrases = read_pt(pt_file=phrase_table)
@@ -21,8 +24,6 @@ if __name__ == '__main__':
     reordering_file = open(data_path+'dm_fe_0.75', 'r')
     reordering = read_ro(ro_file=reordering_file)
 
-    # test_results_trace = open(data_path+'testresults.trans.txt.trace', 'r')
-
-    overall_trans_cost(phrases,lm,minlm_p,reordering)
+    overall_trans_cost(l_r, l_t, l_l, l_d, l_p, phrases,lm,minlm_p,reordering)
 
     print('time:', time.time() - start)
