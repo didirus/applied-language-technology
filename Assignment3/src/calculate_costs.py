@@ -197,7 +197,10 @@ def overall_trans_cost(l_r, l_t, l_l, l_d, l_p, p_table=None, lm=None, min_lm_pr
             cost_per_phrase.append(phrase_cost)
 
             # dump in file
-            output_file.write(trace[i].rstrip() + " lm:" + str(phrase_language_model_cost) + " tm:" + str(phrase_translation_model_cost) + " rm:" + str(phrase_reordering_model_cost) + " total_phrase:" + str(phrase_cost) + " ||| ")
+            output_file.write(trace[i].rstrip() + " lm:" + str(phrase_language_model_cost) +
+                              " tm:" + str(phrase_translation_model_cost) + " rm:" + str(phrase_reordering_model_cost)
+                              + ' lin_dist:' + str(phrase_linear_distortion_cost) + " total_phrase:" + str(phrase_cost)
+                              + " ||| ")
 
         # sum all the phrase costs for entire sentence
         sentence_cost = sum(cost_per_phrase)
