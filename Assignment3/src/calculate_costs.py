@@ -154,12 +154,23 @@ def overall_trans_cost(l_r, l_t, l_l, l_d, l_p, p_table=None, lm=None, min_lm_pr
     traces = open(data_path+'testresults.trans.txt.trace', 'r')
     f_file = open(data_path+'file.test.de', 'r')
     output_file = open(data_path+'cost_output.txt', 'w')
+    e_file = open(data_path+'file.test.en', 'r')
+    output_file2 = open('../output/output.txt', 'w')
+
 
     sentence_cost_list = []
-    for f_line, trace in zip(f_file, traces):
+    for f_line,e_line, trace in zip(f_file,e_file, traces):
 
         trace = trace.split(' ||| ')
         f_line = f_line.split()
+        e_line = e_line.split()
+
+        sum_phrase_reordering_model_cost = 0.0
+        sum_phrase_translation_model_cost = 0.0
+        sum_phrase_language_model_cost = 0.0
+        sum_phrase_linear_distortion_cost = 0.0
+        sum_phrase_penalty = 0.0
+
         phrases = [tuple(p.split(':', 1)) for p in trace]
         cost_per_phrase = []
         for i in range(0, len(phrases)):
@@ -192,11 +203,6 @@ def overall_trans_cost(l_r, l_t, l_l, l_d, l_p, p_table=None, lm=None, min_lm_pr
             phrase_penalty = -1
 
             # combine all costs into one "phrase cost"
-            # phrase_cost = np.sum(l_r * phrase_reordering_model_cost,
-            #                      l_t * phrase_translation_model_cost,
-            #                      l_l * phrase_language_model_cost,
-            #                      l_d * phrase_linear_distortion_cost,
-            #                      l_p * phrase_penalty)
             phrase_cost = l_r * phrase_reordering_model_cost+l_t * phrase_translation_model_cost+l_l * phrase_language_model_cost+l_d * phrase_linear_distortion_cost+l_p * phrase_penalty
 
             cost_per_phrase.append(phrase_cost)
@@ -207,14 +213,36 @@ def overall_trans_cost(l_r, l_t, l_l, l_d, l_p, p_table=None, lm=None, min_lm_pr
                               + ' lin_dist:' + str(phrase_linear_distortion_cost) + " total_phrase:" + str(phrase_cost)
                               + " ||| ")
 
+            sum_phrase_reordering_model_cost += phrase_reordering_model_cost
+            sum_phrase_translation_model_cost += phrase_translation_model_cost
+            sum_phrase_language_model_cost += phrase_language_model_cost
+            sum_phrase_linear_distortion_cost += phrase_linear_distortion_cost
+            sum_phrase_penalty += phrase_penalty
+
         # sum all the phrase costs for entire sentence
         sentence_cost = sum(cost_per_phrase)
         output_file.write("Line cost: "+ str(sentence_cost) + '\n')
+
+        #dump into other file
+        print ('dumping in other file')
+        print(' '.join(f_line) + " ||| " + ' '.join(e_line) + " ||| " + " lm:" + str(sum_phrase_language_model_cost) +
+                              " tm:" + str(sum_phrase_translation_model_cost) + " rm:" +
+                           str(sum_phrase_reordering_model_cost) + ' lin_dist:' + str(sum_phrase_linear_distortion_cost)
+                           + " penalty:" + str(sum_phrase_penalty)+ " ||| " + "Line cost: "+ str(sentence_cost) + '\n')
+
+
+
+
+        output_file2.write(' '.join(f_line) + " ||| " + ' '.join(e_line) + " ||| " + " lm:" + str(sum_phrase_language_model_cost) +
+                              " tm:" + str(sum_phrase_translation_model_cost) + " rm:" +
+                           str(sum_phrase_reordering_model_cost) + ' lin_dist:' + str(sum_phrase_linear_distortion_cost)
+                           + " penalty:" + str(sum_phrase_penalty)+ " ||| " + "Line cost: "+ str(sentence_cost) + '\n')
+
 
     # close files
     traces.close()
     f_file.close()
     output_file.close()
-
+    output_file2.close()
     return
 
