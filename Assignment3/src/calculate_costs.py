@@ -156,8 +156,8 @@ def overall_trans_cost(l_r, l_t, l_l, l_d, l_p, p_table=None, lm=None, min_lm_pr
     output_file = open(data_path+'cost_output.txt', 'w')
 
     sentence_cost_list = []
-
     for f_line, trace in zip(f_file, traces):
+
         trace = trace.split(' ||| ')
         f_line = f_line.split()
         phrases = [tuple(p.split(':', 1)) for p in trace]
@@ -182,8 +182,12 @@ def overall_trans_cost(l_r, l_t, l_l, l_d, l_p, p_table=None, lm=None, min_lm_pr
             phrase_language_model_cost = lm_cost(phrase_lm, lm, min_lm_prob)
 
             # linear distortion cost
-            phrase_linear_distortion_cost = lin_dist_cost(phrase, phrases[i+1])
+            try:
 
+                phrase_linear_distortion_cost = lin_dist_cost(phrase, phrases[i+1])
+            except IndexError:
+                print ('End of sentance, Index error for list')
+                phrase_linear_distortion_cost = 0
             # phrase penalty
             phrase_penalty = -1
 
