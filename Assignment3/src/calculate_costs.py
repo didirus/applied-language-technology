@@ -188,11 +188,12 @@ def overall_trans_cost(l_r, l_t, l_l, l_d, l_p, p_table=None, lm=None, min_lm_pr
             phrase_penalty = -1
 
             # combine all costs into one "phrase cost"
-            phrase_cost = np.sum(l_r * phrase_reordering_model_cost,
-                                 l_t * phrase_translation_model_cost,
-                                 l_l * phrase_language_model_cost,
-                                 l_d * phrase_linear_distortion_cost,
-                                 l_p * phrase_penalty)
+            # phrase_cost = np.sum(l_r * phrase_reordering_model_cost,
+            #                      l_t * phrase_translation_model_cost,
+            #                      l_l * phrase_language_model_cost,
+            #                      l_d * phrase_linear_distortion_cost,
+            #                      l_p * phrase_penalty)
+            phrase_cost = l_r * phrase_reordering_model_cost+l_t * phrase_translation_model_cost+l_l * phrase_language_model_cost+l_d * phrase_linear_distortion_cost+l_p * phrase_penalty
 
             cost_per_phrase.append(phrase_cost)
 
