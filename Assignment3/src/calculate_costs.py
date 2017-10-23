@@ -1,7 +1,6 @@
 import math
-import numpy as np
 
-# todo: calculate cost from language model recursive?
+
 def lm_cost(phrase_lm, lm, min_lm_prob):
     lmcost = 0
     e = phrase_lm
@@ -26,7 +25,7 @@ def lm_cost(phrase_lm, lm, min_lm_prob):
     return lmcost
 
 
-def word_cost(w_n,history, lm, minimum_cost, backoff=False):
+def word_cost(w_n, history, lm, minimum_cost, backoff=False):
 
     wn_cost = 0
     n_gram = ' '.join(history + [w_n])
@@ -37,7 +36,7 @@ def word_cost(w_n,history, lm, minimum_cost, backoff=False):
     else:
         # n-gram not available
         if len(history) > 0:
-            #backoff to shorter history w_2...w_{n-1}
+            # backoff to shorter history w_2...w_{n-1}
             new_history = history[1:]
             # Recursive call of word_cost,
             # and add backoff probability
@@ -53,29 +52,35 @@ def reor_model_cost(phrase, trace, reorder_file, f_line):
     print ('reordering model cost')
     # index of the phrase in the trace sentence
     phrase_index = ''.join([str(phrase[0]), ':', str(phrase[1])])
-
     phrase_pos = trace.index(phrase_index)
+
+    # get the aligment of the previous phrase
     prev_ph_align = trace[phrase_pos - 1].split(':')[0]
-    if (phrase_pos != len(trace) - 1):
+
+    if phrase_pos != len(trace) - 1:
+        # if the phrase is not the last phrase, get the next phrase alignment
         next_ph_align = trace[phrase_pos + 1].split(':')[0]
     else:
+        # if the phrase is the last phrase, set the alignment to end-end
         next_ph_align = 'end-end'
+
+    # split the alignments on the dash
     next_ph_align_begin, next_ph_align_end = next_ph_align.split('-')
     prev_ph_align_start, prev_ph_align_end = prev_ph_align.split('-')
 
-    reor_cost = 0
+    # get the english phrase: remove all the empty chars in the end of the string
     e = phrase[1].rstrip()
+
     f_align_start = int(phrase[0].split('-')[0])
     f_align_end = int(phrase[0].split('-')[1])
 
-    # list of words from the f_line
+    # get the german phrase: list of words from the f_line
     f = f_line[f_align_start:f_align_end + 1]
     f = ' '.join(f).rstrip()
     try:
+        # get the orientation probabilities of the file
         probs = reorder_file[(f, e)]
         rl_m, rl_s, rl_d, lr_m, lr_s, lr_d = probs
-        RL_cost = 0
-        LR_cost = 0
 
         # if phrase is first in line
         if phrase_pos == 0:
@@ -108,8 +113,7 @@ def reor_model_cost(phrase, trace, reorder_file, f_line):
     except KeyError:
         # untranslated phrase
         phrase_cost = -1
-    reor_cost += phrase_cost
-    return reor_cost
+    return phrase_cost
 
 
 def transl_model_cost(phrase, p_table, f_line):
@@ -126,9 +130,14 @@ def transl_model_cost(phrase, p_table, f_line):
 
     try:
         p_fe, lex_fe, p_ef, lex_ef, word_pen = p_table[(f, e)]
+
         # For now assumed to be the sum of all the probs (weighted by 1)
-        phrase_cost = 1 * math.log10(p_fe) + 1 * math.log10(lex_fe) + 1 * math.log10(p_ef) + 1 * math.log10(
-            lex_ef) + 1 * word_pen
+        phrase_cost = 1 * math.log10(p_fe) + \
+                      1 * math.log10(lex_fe) + \
+                      1 * math.log10(p_ef) + \
+                      1 * math.log10(lex_ef) + \
+                      1 * word_pen
+
         phrase_cost = phrase_cost * 1  # -1
     except KeyError:
         if f != e:
@@ -188,16 +197,15 @@ def overall_trans_cost(l_r, l_t, l_l, l_d, l_p, p_table=None, lm=None, min_lm_pr
             except IndexError:
                 print ('End of sentance, Index error for list')
                 phrase_linear_distortion_cost = 0
+
             # phrase penalty
             phrase_penalty = -1
 
-            # combine all costs into one "phrase cost"
-            # phrase_cost = np.sum(l_r * phrase_reordering_model_cost,
-            #                      l_t * phrase_translation_model_cost,
-            #                      l_l * phrase_language_model_cost,
-            #                      l_d * phrase_linear_distortion_cost,
-            #                      l_p * phrase_penalty)
-            phrase_cost = l_r * phrase_reordering_model_cost+l_t * phrase_translation_model_cost+l_l * phrase_language_model_cost+l_d * phrase_linear_distortion_cost+l_p * phrase_penalty
+            phrase_cost = l_r * phrase_reordering_model_cost + \
+                          l_t * phrase_translation_model_cost + \
+                          l_l * phrase_language_model_cost + \
+                          l_d * phrase_linear_distortion_cost + \
+                          l_p * phrase_penalty
 
             cost_per_phrase.append(phrase_cost)
 

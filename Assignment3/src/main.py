@@ -18,12 +18,12 @@ if __name__ == '__main__':
 
     print('Read Language model and probabilities')
     language_model = open(data_path+'file.en.lm', 'r')
-    lm,minlm_p = read_lm(lm_file=language_model)
+    lm, minlm_p = read_lm(lm_file=language_model)
 
     print('Read reorderings')
     reordering_file = open(data_path+'dm_fe_0.75', 'r')
     reordering = read_ro(ro_file=reordering_file)
 
-    overall_trans_cost(l_r, l_t, l_l, l_d, l_p, phrases,lm,minlm_p,reordering)
+    overall_trans_cost(l_r, l_t, l_l, l_d, l_p, phrases, lm, minlm_p, reordering)
 
     print('time:', time.time() - start)

@@ -1,4 +1,5 @@
-import pickle,os
+import pickle, os
+
 
 def checkif_float(N):
     '''
@@ -26,7 +27,7 @@ def read_pt(pt_file=None):
         phrases = {}
         i = 0
         for line in pt_file:
-            if (i+1)%50000 == 0:
+            if (i+1) % 50000 == 0:
                 print('line no.(PT) ', i)
                 #break
             i += 1
@@ -54,21 +55,20 @@ def read_lm(lm_file=None):
         lm = {}
         min_p = 0.0
 
-        i=0
+        i = 0
         for line in lm_file:
-            if (i+1)%50000 == 0:
-                print ('line no.(lm): ',i)
-            i+=1
+            if (i+1) % 50000 == 0:
+                print ('line no.(lm): ', i)
+            i += 1
 
-            if line[0] =='\\':
-                if line[-7:-1]=='grams:':
+            if line[0] == '\\':  # Because python does not recognise 1 slash
+                if line[-7:-1] == 'grams:':
                     print (line)
                     gram = line[1]
-                    # print (gram)
                 continue
             line = line.split()
 
-            if gram!=0 and len(line)>0:
+            if gram != 0 and len(line) > 0:
                 prob = float(line[0])
                 if prob < min_p:
                     min_p = prob
