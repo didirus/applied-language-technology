@@ -154,21 +154,17 @@ def lin_dist_cost(phrase, next_phrase):
     return cost
 
 
-def overall_trans_cost(l_r, l_t, l_l, l_d, l_p, p_table=None, lm=None, min_lm_prob=None, reorder_file=None):
-
-    data_path = '../data/ALT/'
+def overall_trans_cost(data_path, l_r, l_t, l_l, l_d, l_p, p_table=None, lm=None, min_lm_prob=None, reorder_file=None):
 
     print ('overall cost function')
 
-    traces = open(data_path+'testresults.trans.txt.trace', 'r')
-    f_file = open(data_path+'file.test.de', 'r')
-    output_file = open(data_path+'cost_output.txt', 'w')
-    e_file = open(data_path+'file.test.en', 'r')
+    traces = open(data_path + 'testresults.trans.txt.trace', 'r')
+    f_file = open(data_path + 'file.test.de', 'r')
+    output_file = open(data_path + 'cost_output.txt', 'w')
+    e_file = open(data_path + 'file.test.en', 'r')
     output_file2 = open('../output/output.txt', 'w')
 
-
-    sentence_cost_list = []
-    for f_line,e_line, trace in zip(f_file,e_file, traces):
+    for f_line, e_line, trace in zip(f_file, e_file, traces):
 
         trace = trace.split(' ||| ')
         f_line = f_line.split()
@@ -244,14 +240,10 @@ def overall_trans_cost(l_r, l_t, l_l, l_d, l_p, p_table=None, lm=None, min_lm_pr
                            str(sum_phrase_reordering_model_cost) + ' lin_dist:' + str(sum_phrase_linear_distortion_cost)
                            + " penalty:" + str(sum_phrase_penalty)+ " ||| " + "Line cost: "+ str(sentence_cost) + '\n')
 
-
-
-
         output_file2.write(' '.join(f_line) + " ||| " + ' '.join(e_line) + " ||| " + " lm:" + str(sum_phrase_language_model_cost) +
                               " tm:" + str(sum_phrase_translation_model_cost) + " rm:" +
                            str(sum_phrase_reordering_model_cost) + ' lin_dist:' + str(sum_phrase_linear_distortion_cost)
                            + " penalty:" + str(sum_phrase_penalty)+ " ||| " + "Line cost: "+ str(sentence_cost) + '\n')
-
 
     # close files
     traces.close()
